@@ -1,0 +1,10 @@
+{
+    "[c]": {
+        "editor.tabSize": 8,
+        "editor.rulers": [
+            {
+                "column": 80
+            }
+        ]
+    }
+}

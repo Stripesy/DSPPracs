@@ -4,52 +4,57 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 
 // argv[1] = port
 
 #define MAXLENGTH 1024
 
-int main() {
-    int sockfd;
-    char buffer[MAXLENGTH];  
-    struct sockaddr_in server, client;  
+int main(int argc, char *argv[]) {
+        int sockfd;
+        char buffer[MAXLENGTH]; 
+        struct sockaddr_in server, client;  
 
-    memset(&server, 0 ,sizeof(server));
-    memset(&client, 0 ,sizeof(client));
+        if(argc != 2) 
+        {
+        printf("Argument count should be 2. Is %d", argc);
+        return -1;
+        }
 
-    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
+        memset(&server, 0 ,sizeof(server));
+        memset(&client, 0 ,sizeof(client));
 
-    int port = atoi(1890);
-    printf("The set port is %d.\n", port); // Prints the port to error check.
+        sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
-    // Server and client addresses;
-    //Set up addresses.
-    server.sin_family = AF_INET;
-    server.sin_addr.s_addr = INADDR_ANY; 
-    server.sin_port = htons(port);
+        int port = 18;
+        printf("The set port is %d.\n", port); 
+        // Prints the port to error check.
 
-    bind(sockfd, (const struct sockaddr * ) &server, sizeof(server));
+        // Server and client addresses;
+        //Set up addresses.
+        server.sin_family = AF_INET;
+        server.sin_addr.s_addr = INADDR_ANY; 
+        server.sin_port = htons(port);
 
-    int cliLen, msgLen;
+        bind(sockfd, (const struct sockaddr * ) &server, sizeof(server));
 
-    cliLen = sizeof(client);
+        int cliLen, msgLen;
 
-    connect(sockfd, (struct sockaddr *) &client, cliLen);
-    printf("%s", "Connected.\n");
+        cliLen = sizeof(client);
 
-    for(int i = 0; i < 2; i++) {
+                for(int i = 0; i < 2; i++) {
 
-    msgLen = read(sockfd, buffer, MAXLENGTH);
-    buffer[msgLen] = '\0';
-    printf("Client : %s", buffer);
+                msgLen = recvfrom(sockfd, buffer, MAXLENGTH, 0, 
+                (struct sockaddr *) &client, &cliLen);
+                buffer[msgLen] = '\0';
+                printf("Client : %s", buffer);
 
-    char *message;
-    printf("Server : ");
-    fgets(message, MAXLENGTH-1, stdin);
+                char *message;
+                printf("Server : ");
+                fgets(message, MAXLENGTH-1, stdin);
 
-    write(sockfd, message, MAXLENGTH);
-    }
+                sendto(sockfd, message, strlen(message), 0,  
+                (const struct sockaddr *) &client, cliLen);
+                }
 
 }

@@ -8,6 +8,7 @@
         ]
     },
     "files.associations": {
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "in.h": "c"
     }
 }

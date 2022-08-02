@@ -7,46 +7,56 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-// argv[1] = port
+#define MAXLENGTH 1023
 
-#define MAXLENGTH 1024
+int main(int argc, char *argv[]) 
+{
+        int sockfd, port, replyLength;
+        char buffer[MAXLENGTH+1], *c;  
+        struct sockaddr_in server; //declaring variable
 
-int main(int argc, char *argv[]) {
-    int sockfd;
-    char buffer[MAXLENGTH];  
-    struct sockaddr_in server; 
+        if(argc != 2) 
+        {
+                printf("Argument count should be 2. Is %d", argc);
+                return -1;
+        }
 
-    memset(&server, 0 ,sizeof(server));
+        memset(&server, 0, sizeof(server)); // set server memory
 
-    int port = atoi(argv[1]);
+        port = atoi(argv[1]); // set port as first terminal input
+        // (excluding file name)
 
-    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+        sockfd = socket(AF_INET, SOCK_DGRAM, 0); // create socket
 
-    server.sin_family = AF_INET;
-    server.sin_addr.s_addr = INADDR_ANY; 
-    server.sin_port = htons(port);
+        server.sin_family = AF_INET;
+        server.sin_addr.s_addr = INADDR_ANY;
+        server.sin_port = htons(port); // make sure port is in network
+        // appropriate format
 
-    char *message;
+        if(connect(sockfd, (struct sockaddr*) 
+        &server, sizeof(server)) < 0) 
+        {
+                perror("connection failed.");
+                exit(EXIT_FAILURE);
+        }
+        // connect socket to server address
+        
+        printf("Connected.\n");
 
-    int srvLen, msgLen;
+        for(int i = 0; i < 3; i++) 
+        {
+                printf("Client : "); // print client message
+                fgets(buffer, MAXLENGTH, stdin); // get input
+                write(sockfd, buffer, MAXLENGTH); // write message to socket
+                replyLength = read(sockfd, buffer, MAXLENGTH); // read reply
+                // from socket
+                buffer[replyLength] = '\0'; // add terminating char
+                printf("Server : %s", buffer); // print server reply
 
-    connect(sockfd, (const struct sockaddr*) &server, sizeof(server));
-    printf("%s", "Connected.\n");
-
-    for(int i = 0; i < 2; i++) {
-
-    printf("Client : ");
-
-    fgets(message, MAXLENGTH-1, stdin);
-
-    write(sockfd, message, MAXLENGTH);
-
-    int srvLen = read(sockfd, buffer, MAXLENGTH);
-
-    buffer[srvLen] = '\0';
-
-    printf("Server : %s", buffer);
-
-    }
-
+                if(c=strchr(buffer, '\n')) //check for newline char and clear
+                {
+                        *c = 0;
+                }
+        }
+        close(sockfd);
 }

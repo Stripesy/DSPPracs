@@ -36,9 +36,11 @@ int main(int argc, char *argv[]) {
     fgets(message, MAXLENGTH-1, stdin);
 
 
-    sendto(sockfd, message, strlen(message), 0, (const struct sockaddr * ) &server, sizeof(server));
+    sendto(sockfd, message, strlen(message), 0, (const struct sockaddr * ) 
+    &server, sizeof(server));
 
-    srvLen = recvfrom(sockfd, buffer, MAXLENGTH, 0, (struct sockaddr * ) &server, &srvLen);
+    srvLen = recvfrom(sockfd, buffer, MAXLENGTH, 0, (struct sockaddr * ) 
+    &server, &srvLen);
     buffer[srvLen] = '\0';
 
     printf("Server : %s", buffer);

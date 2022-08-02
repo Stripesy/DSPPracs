@@ -4,7 +4,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include<arpa/inet.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 
 // argv[1] = port
 
@@ -29,16 +30,19 @@ int main(int argc, char *argv[]) {
 
     int srvLen, msgLen;
 
+    connect(sockfd, (const struct sockaddr*) &server, sizeof(server));
+    printf("%s", "Connected.\n");
+
     for(int i = 0; i < 2; i++) {
 
     printf("Client : ");
 
     fgets(message, MAXLENGTH-1, stdin);
 
+    write(sockfd, message, MAXLENGTH);
 
-    sendto(sockfd, message, strlen(message), 0, (const struct sockaddr * ) &server, sizeof(server));
+    int srvLen = read(sockfd, buffer, MAXLENGTH);
 
-    srvLen = recvfrom(sockfd, buffer, MAXLENGTH, 0, (struct sockaddr * ) &server, &srvLen);
     buffer[srvLen] = '\0';
 
     printf("Server : %s", buffer);

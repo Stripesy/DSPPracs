@@ -11,19 +11,15 @@
 
 int main(int argc, char *argv[]) 
 {
-        int sockfd, port, replyLength;
+        int sockfd, port, returnVal;
         char buffer[MAXLENGTH+1], *c;  
         struct sockaddr_in server; //declaring variable
 
-        if(argc != 2) 
-        {
-                printf("Argument count should be 2. Is %d", argc);
-                return -1;
-        }
+
 
         memset(&server, 0, sizeof(server)); // set server memory
 
-        port = atoi(argv[1]); // set port as first terminal input
+        port = 1890; // set port as first terminal argument
         // (excluding file name)
 
         sockfd = socket(AF_INET, SOCK_DGRAM, 0); // create socket
@@ -47,10 +43,14 @@ int main(int argc, char *argv[])
         {
                 printf("Client : "); // print client message
                 fgets(buffer, MAXLENGTH, stdin); // get input
-                write(sockfd, buffer, MAXLENGTH); // write message to socket
-                replyLength = read(sockfd, buffer, MAXLENGTH); // read reply
+                returnVal = write(sockfd, buffer, MAXLENGTH); 
+                printf("Write state is %d.\n", returnVal);
+                // write message to socket
+
+
+                returnVal = read(sockfd, buffer, MAXLENGTH); // read reply
+                printf("Read state is %d.\n", returnVal);
                 // from socket
-                buffer[replyLength] = '\0'; // add terminating char
                 printf("Server : %s", buffer); // print server reply
 
                 if(c=strchr(buffer, '\n')) //check for newline char and clear

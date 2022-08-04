@@ -10,8 +10,8 @@
 #define MAXLENGTH 1024
 
 int main(int argc, char *argv[]) {
-    int sockfd;
-    char buffer[MAXLENGTH];  
+    int sockfd, n;
+    char buffer[MAXLENGTH], temp;  
     struct sockaddr_in server, client;  
 
     memset(&server, 0 ,sizeof(server));
@@ -42,11 +42,22 @@ int main(int argc, char *argv[]) {
     buffer[msgLen] = '\0';
     printf("Client : %s", buffer);
 
-    char *message;
-    printf("Server : ");
-        fgets(message, MAXLENGTH-1, stdin);
+    n = strlen(buffer) - 1;
+    for (int i = 0; i < n-1; i++) 
+    {
+        for (int j = i+1; j < n; j++) 
+        {
+            if (buffer[i] > buffer[j]) 
+            {
+                temp = buffer[i];
+                buffer[i] = buffer[j];
+                buffer[j] = temp;
+            }
+        }
+    }
+    printf("Server : %s", buffer);
 
-    sendto(sockfd, message, strlen(message), 0,  (const struct sockaddr *) &client, cliLen);
+    sendto(sockfd, buffer, strlen(buffer), 0,  (const struct sockaddr *) &client, cliLen);
     }
 
 }

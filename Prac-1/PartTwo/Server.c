@@ -10,8 +10,8 @@
 #define MAXLENGTH 1024
 
 int main(int argc, char *argv[]) {
-        int sockfd, returnVal, port, cliLen;
-        char buffer[MAXLENGTH], *message; 
+        int sockfd, returnVal, port, cliLen, n;
+        char buffer[MAXLENGTH], temp; 
         struct sockaddr_in server, client;  
 
         if(argc != 2) // check for correct arg count
@@ -48,10 +48,22 @@ int main(int argc, char *argv[]) {
                 printf("Recieve state is %d.\n", returnVal);
                 printf("Client : %s", buffer);
 
-                printf("Server : ");
-                fgets(message, MAXLENGTH-1, stdin);
+                n = strlen(buffer) - 1;
+                for (int i = 0; i < n-1; i++) 
+                {
+                        for (int j = i+1; j < n; j++) 
+                        {
+                                if (buffer[i] > buffer[j]) 
+                                {
+                                temp = buffer[i];
+                                buffer[i] = buffer[j];
+                                buffer[j] = temp;
+                                }
+                        }
+                }
+                printf("Server : %s", buffer);
 
-                returnVal = sendto(sockfd, message, strlen(message), 0,  
+                returnVal = sendto(sockfd, buffer, strlen(buffer), 0,  
                 (const struct sockaddr *) &client, cliLen);
                 printf("Send state is %d.\n", returnVal);
                 }

@@ -6,5 +6,9 @@
                 "column": 80
             }
         ]
+    },
+    "files.associations": {
+        "stdlib.h": "c",
+        "in.h": "c"
     }
 }

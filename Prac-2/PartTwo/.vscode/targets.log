@@ -26,6 +26,7 @@ WSLENV = VSCODE_WSL_EXT_LOCATION/up
  
 @F = $(notdir $@)
 # makefile
+ 
 CURDIR := /home/stripes/DSPPracs/Prac-2/PartTwo
 # makefile
 SHELL = /bin/sh
@@ -230,7 +231,7 @@ Client.c:
 #  Successfully updated.
 
 # Not a target:
-.DEFAULT:
+Server:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -241,6 +242,18 @@ test.c:
 #  Last modified 2022-08-17 18:44:11.390997072
 #  File has been updated.
 #  Successfully updated.
+
+# Not a target:
+rawServer:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 clean:
 #  Implicit rule search has not been done.

@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
                 exit(EXIT_FAILURE);
         }
         port = atoi(argv[1]); // set port as first terminal argument
+
         memset(&server, 0, sizeof(server)); // set server memory
         // (excluding file name)
         sockfd = socket(AF_INET, SOCK_STREAM, 0); // create socket

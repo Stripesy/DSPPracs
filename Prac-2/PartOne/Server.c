@@ -12,19 +12,25 @@
 #include <sys/wait.h>
 
 #define BUF_LEN 1024
-#define COM_BUF_LEN 1000
 
 void handle_sigchld(int);
 void manage_connection(int, int);
 int server_processing(char *instr, char *outstr);
-void intHandler(int dummy);
 
 int main(int argc, char *argv[])
 {
-        int rssd, essd, ec, client_len, pid, port = 5013;
+        int rssd, essd, ec, client_len, pid, port;
         struct sockaddr_in server, client;
         struct hostent *client_details;
         struct sigaction chldsig;
+
+        if(argc != 2)
+        {
+                printf("Incorrect number of arguments, should be 2, is %d",
+                argc);
+                exit(EXIT_FAILURE);
+        }
+        port = atoi(argv[1]);
 
         fprintf(stderr, "M: The DSAP example server is starting...\n");
 
@@ -110,7 +116,7 @@ int main(int argc, char *argv[])
 void manage_connection(int in, int out)
 {
         int rc, bc; /*read count, buffer count*/
-        char inbuf[BUF_LEN], outbuf[BUF_LEN], in_data[COM_BUF_LEN],
+        char inbuf[BUF_LEN], outbuf[BUF_LEN],
         hostname[40], prefix[100], revbuf[BUF_LEN];
 
         char end_of_data = '\n';
@@ -130,7 +136,7 @@ void manage_connection(int in, int out)
                 bc = 0;
                 while(1)
                 {
-                        rc = read(in, in_data, COM_BUF_LEN);
+                        rc = read(in, inbuf, BUF_LEN);
                         if(rc > 0)
                         {
                                 if((bc+rc) > BUF_LEN)
@@ -145,13 +151,13 @@ void manage_connection(int in, int out)
                                 for(int i = 0; i < rc; i++)
                                 {
                                         fprintf(stderr, "%s%d\t%c\n", prefix,
-                                        in_data[i], in_data[i]);
+                                        inbuf[i], inbuf[i]);
                                 }
-                                memcpy(&inbuf[bc], in_data, rc);
+                                memcpy(&inbuf[bc], inbuf, rc);
                                 bc += rc;
 
                                 /* check if end of buffer */
-                                if(in_data[rc-1] == end_of_data)
+                                if(inbuf[rc-1] == end_of_data)
                                 {
                                         break;
                                 }

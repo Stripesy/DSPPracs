@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Wed Aug 17 16:53:47 2022
+# Make data base, printed on Wed Aug 17 18:44:10 2022
 
 # Variables
 
@@ -25,6 +25,7 @@ WSLENV = VSCODE_WSL_EXT_LOCATION/up
 # automatic
 @F = $(notdir $@)
 # makefile
+ 
 CURDIR := /home/stripes/DSPPracs/Prac-2/PartTwo
 # makefile
 SHELL = /bin/sh
@@ -49,7 +50,7 @@ PATH = /home/stripes/.vscode-server/bin/6d9b74a70ca9c7733b29f0456fd8195364076dda
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
-VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-c3e127db-0255-4971-b5f6-9dce4676f403.sock
+VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-2bacb040-1670-4ced-a8ad-70068f1b4033.sock
 # default
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
 # environment
@@ -61,7 +62,7 @@ PWD = /home/stripes/DSPPracs/Prac-2/PartTwo
 # default
 .LOADED := 
 # environment
-WSL_INTEROP = /run/WSL/23091_interop
+WSL_INTEROP = /run/WSL/27954_interop
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
@@ -149,9 +150,9 @@ WSL_DISTRO_NAME = Ubuntu
 
 # Directories
 
-# . (device 2064, inode 3201): 10 files, 5 impossibilities.
+# . (device 2064, inode 3201): 10 files, 3 impossibilities.
 
-# 10 files, 5 impossibilities in 1 directories.
+# 10 files, 3 impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -175,9 +176,27 @@ all: Client rawServer Server
 Client: Client.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'Client'
-#  Last modified 2022-08-17 16:52:57.761041305
+#  Last modified 2022-08-17 17:09:51.151034588
 #  File has been updated.
-#  Successfully updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := Client
+# automatic
+# % := 
+# automatic
+# * := Client
+# automatic
+# + := Client.c
+# automatic
+# | := 
+# automatic
+# < := Client.c
+# automatic
+# ^ := Client.c
+# automatic
+# ? := Client.c
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=1/15=7%
 #  recipe to execute (from 'Makefile', line 8):
 	$(CC) $(CFLAGS) -o $@ $<
 
@@ -188,62 +207,30 @@ Makefile:
 #  File has been updated.
 #  Successfully updated.
 
-Server: Server.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'Server'
-#  Last modified 2022-08-17 16:44:50.591044534
-#  File has been updated.
-#  Needs to be updated (-q is set).
-# automatic
-# @ := Server
-# automatic
-# % := 
-# automatic
-# * := Server
-# automatic
-# + := Server.c
-# automatic
-# | := 
-# automatic
-# < := Server.c
-# automatic
-# ^ := Server.c
-# automatic
-# ? := Server.c
-# variable set hash-table stats:
-# Load=8/32=25%, Rehash=0, Collisions=1/15=7%
-#  recipe to execute (from 'Makefile', line 8):
- 
-	$(CC) $(CFLAGS) -o $@ $<
+# Not a target:
+Server:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 Client.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-17 16:52:55.861041317
+#  Last modified 2022-08-17 17:10:37.55103428
 #  File has been updated.
 #  Successfully updated.
 
-rawServer: rawServer.c
-#  Implicit rule search has been done.
-#  Implicit/static pattern stem: 'rawServer'
-#  Last modified 2022-08-17 16:28:08.541051175
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 8):
-	$(CC) $(CFLAGS) -o $@ $<
+# Not a target:
+rawServer:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 .DEFAULT:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-
-# Not a target:
-Server.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-08-17 16:45:06.721044427
-#  File has been updated.
-#  Successfully updated.
 
 clean:
 #  Implicit rule search has not been done.
@@ -252,27 +239,20 @@ clean:
 #  recipe to execute (from 'Makefile', line 12):
 	rm -f $(PROGS)
 
-# Not a target:
-rawServer.c:
-#  Implicit rule search has been done.
-#  Last modified 2022-08-17 16:28:08.541051175
-#  File has been updated.
-#  Successfully updated.
-
 # files hash-table stats:
-# Load=11/1024=1%, Rehash=0, Collisions=0/44=0%
+# Load=9/1024=1%, Rehash=0, Collisions=0/32=0%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 23 / storage = 196 B / avg = 8 B
-# current buf: size = 8162 B / used = 196 B / count = 23 / avg = 8 B
+# strcache buffers: 1 (0) / strings = 21 / storage = 171 B / avg = 8 B
+# current buf: size = 8162 B / used = 171 B / count = 21 / avg = 8 B
 
-# strcache performance: lookups = 52 / hit rate = 55%
+# strcache performance: lookups = 40 / hit rate = 47%
 # hash-table stats:
-# Load=23/8192=0%, Rehash=0, Collisions=1/52=2%
-# Finished Make data base on Wed Aug 17 16:53:47 2022
+# Load=21/8192=0%, Rehash=0, Collisions=1/40=2%
+# Finished Make data base on Wed Aug 17 18:44:10 2022
 
  

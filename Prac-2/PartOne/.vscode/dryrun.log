@@ -1,8 +1,5 @@
 make --dry-run --always-make --keep-going --print-directory
 make: Entering directory '/home/stripes/DSPPracs/Prac-2/PartOne'
-cc  -o Client Client.c
- 
-cc  -o rawServer rawServer.c
 cc  -o Server Server.c
 make: Leaving directory '/home/stripes/DSPPracs/Prac-2/PartOne'
  

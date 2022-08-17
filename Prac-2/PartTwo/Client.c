@@ -18,16 +18,14 @@ int main(int argc, char *argv[])
 
         // if(argc != 2)
         // {
-        //         printf("Incorrect number of arguments, should be 2, is %d",
+        //         printf("Incorrect number of arguments, should be 2, is %d\n",
         //         argc);
+        //         exit(EXIT_FAILURE);
         // }
-
-
-        memset(&server, 0, sizeof(server)); // set server memory
-
         //port = atoi(argv[1]); // set port as first terminal argument
+        port = 2001;
+        memset(&server, 0, sizeof(server)); // set server memory
         // (excluding file name)
-        port = 8000;
         sockfd = socket(AF_INET, SOCK_STREAM, 0); // create socket
 
         server.sin_family = AF_INET;
@@ -54,6 +52,7 @@ int main(int argc, char *argv[])
 
                 printf("Client : "); // print client message
                 fgets(buffer, MAXLENGTH, stdin); // get input
+                buffer[strlen(buffer)-1] = '&';
                 returnVal = write(sockfd, buffer, strlen(buffer)); 
                 printf("Write state is %d.\n", returnVal);
                 // write message to socket

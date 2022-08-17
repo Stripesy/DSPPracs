@@ -19,10 +19,10 @@ int main(int argc, char *argv[])
 
         memset(&server, 0, sizeof(server)); // set server memory
 
-        port = 1890; // set port as first terminal argument
+        port = 5556; // set port as first terminal argument
         // (excluding file name)
 
-        sockfd = socket(AF_INET, SOCK_DGRAM, 0); // create socket
+        sockfd = socket(AF_INET, SOCK_STREAM, 0); // create socket
 
         server.sin_family = AF_INET;
         server.sin_addr.s_addr = INADDR_ANY;
@@ -41,6 +41,10 @@ int main(int argc, char *argv[])
 
         for(int i = 0; i < 3; i++) 
         {
+                                returnVal = read(sockfd, buffer, MAXLENGTH); // read reply
+                printf("Read state is %d.\n", returnVal);
+                // from socket
+                printf("Server : %s", buffer); // print server reply
                 printf("Client : "); // print client message
                 fgets(buffer, MAXLENGTH, stdin); // get input
                 returnVal = write(sockfd, buffer, MAXLENGTH); 
@@ -48,10 +52,6 @@ int main(int argc, char *argv[])
                 // write message to socket
 
 
-                returnVal = read(sockfd, buffer, MAXLENGTH); // read reply
-                printf("Read state is %d.\n", returnVal);
-                // from socket
-                printf("Server : %s", buffer); // print server reply
 
                 if(c=strchr(buffer, '\n')) //check for newline char and clear
                 {

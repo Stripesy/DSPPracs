@@ -17,16 +17,23 @@
 void handle_sigchld(int);
 void manage_connection(int, int);
 int server_processing(char *instr, char *outstr);
-void intHandler(int dummy);
 
 int main(int argc, char *argv[])
 {
-        int rssd, essd, ec, client_len, pid, port = 5013;
+        int rssd, essd, ec, client_len, pid, port;
         struct sockaddr_in server, client;
         struct hostent *client_details;
         struct sigaction chldsig;
 
-        fprintf(stderr, "M: The DSAP example server is starting...\n");
+        if(argc != 2)
+        {
+                printf("Incorrect number of arguments, should be 2, is %d",
+                argc);
+        }
+        port = atoi(argv[1]);
+
+        fprintf(stderr, "M: The DSAP example server is starting with " \
+        "port %d...\n", port);
 
         chldsig.sa_handler = handle_sigchld;
         sigfillset(&chldsig.sa_mask);
@@ -151,8 +158,9 @@ void manage_connection(int in, int out)
                                 bc += rc;
 
                                 /* check if end of buffer */
-                                if(in_data[rc-1] == end_of_data)
+                                if(inbuf[rc-1] == end_of_data)
                                 {
+                                        inbuf[rc-1] = '\0';
                                         break;
                                 }
                         }
@@ -176,7 +184,7 @@ void manage_connection(int in, int out)
                 }
                 /*Telnet ends with /r/n so we need to chop
                 2 off of the end*/
-                inbuf[bc-2] = '\0';
+                //inbuf[bc-2] = '\0';
                 if(inbuf[0] == 'X')
                 {
                         break;
@@ -216,7 +224,9 @@ int server_processing(char *instr, char *outstr)
                         outstr[i] = c;
                 }
         }
+
         outstr[len] = '\0';
+
         return len;
 }
 

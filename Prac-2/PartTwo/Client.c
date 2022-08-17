@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
         
         printf("Connected.\n");
 
-        for(int i = 0; i < 3; i++) 
+        while(buffer[0] != 'X' && buffer[1] != '\0')
         {
                 returnVal = read(sockfd, buffer, MAXLENGTH); // read reply
                 printf("Read state is %d.\n", returnVal);
@@ -54,10 +54,6 @@ int main(int argc, char *argv[])
 
                 printf("Client : "); // print client message
                 fgets(buffer, MAXLENGTH, stdin); // get input
-                if(buffer[0] == 'X')
-                {
-                        exit(EXIT_SUCCESS);
-                }
                 returnVal = write(sockfd, buffer, strlen(buffer)); 
                 printf("Write state is %d.\n", returnVal);
                 // write message to socket

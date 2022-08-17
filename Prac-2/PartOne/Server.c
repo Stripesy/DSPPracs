@@ -17,10 +17,11 @@
 void handle_sigchld(int);
 void manage_connection(int, int);
 int server_processing(char *instr, char *outstr);
+void intHandler(int dummy);
 
 int main(int argc, char *argv[])
 {
-        int rssd, essd, ec, client_len, pid, port = 1890;
+        int rssd, essd, ec, client_len, pid, port = 2001;
         struct sockaddr_in server, client;
         struct hostent *client_details;
         struct sigaction chldsig;
@@ -106,7 +107,6 @@ int main(int argc, char *argv[])
         close(rssd);
 }
 
-
 void manage_connection(int in, int out)
 {
         int rc, bc; /*read count, buffer count*/
@@ -146,53 +146,56 @@ void manage_connection(int in, int out)
                                 {
                                         fprintf(stderr, "%s%d\t%c\n", prefix,
                                         in_data[i], in_data[i]);
-                                        memcpy(&inbuf[bc], in_data, rc);
-                                        bc += rc;
-
-                                        /* check if end of buffer */
-                                        if(in_data[rc-1] == end_of_data)
-                                        {
-                                                break;
-                                        }
-                                        else if(rc == 0)
-                                        {
-                                                fprintf(stderr, "\n%sClient " \
-                                                "has closed to connection.\n",
-                                                prefix);
-                                                close(in);
-                                                exit(EXIT_FAILURE);
-                                        }
-                                        else
-                                        {
-                                                sprintf(prefix, "\tC %d: " \
-                                                "While reading from " \
-                                                "connection", getpid());
-                                                perror(prefix);
-                                                close(in);
-                                                exit(EXIT_FAILURE);
-                                        }
                                 }
-                                /*Telnet ends with /r/n so we need to chop
-                                2 off of the end*/
-                                inbuf[bc-2] = '\0';
-                                if(inbuf[0] == 'X')
+                                memcpy(&inbuf[bc], in_data, rc);
+                                bc += rc;
+
+                                /* check if end of buffer */
+                                if(in_data[rc-1] == end_of_data)
                                 {
                                         break;
                                 }
-                                revcnt = server_processing(inbuf, revbuf);
-
-                                sprintf(outbuf, "The server recieved %d " \
-                                "characters, which when the case are toggled" \
-                                "are:\n%s\n\nEnter next string: ", 
-                                strlen(revbuf), revbuf);
-                                write(out, outbuf, strlen(outbuf));
                         }
-                        fprintf(stderr, "\n%sClient has exited the session" \
-                        "closing down.\n", prefix);
-                        close(in);
+                        else if(rc == 0)
+                        {
+                                fprintf(stderr, "\n%sClient " \
+                                "has closed to connection.\n",
+                                prefix);
+                                close(in);
+                                exit(EXIT_FAILURE);
+                        }
+                        else
+                        {
+                                sprintf(prefix, "\tC %d: " \
+                                "While reading from " \
+                                "connection", getpid());
+                                perror(prefix);
+                                close(in);
+                                exit(EXIT_FAILURE);
+                        }
                 }
+                /*Telnet ends with /r/n so we need to chop
+                2 off of the end*/
+                inbuf[bc-2] = '\0';
+                if(inbuf[0] == 'X')
+                {
+                        break;
+                }
+                revcnt = server_processing(inbuf, revbuf);
+
+                sprintf(outbuf, "The server recieved %d " \
+                "characters, which when the case are toggled" \
+                "are:\n%s\n\nEnter next string: ", 
+                strlen(revbuf), revbuf);
+                write(out, outbuf, strlen(outbuf));
         }
+        fprintf(stderr, "\n%sClient has exited the session" \
+        "closing down.\n", prefix);
+        close(in);
 }
+
+        
+
 
 int server_processing(char *instr, char *outstr)
 {

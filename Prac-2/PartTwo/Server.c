@@ -25,14 +25,13 @@ int main(int argc, char *argv[])
         struct hostent *client_details;
         struct sigaction chldsig;
 
-        // if(argc != 2)
-        // {
-        //         printf("Incorrect number of arguments, should be 2, is %d",
-        //         argc);
-        //         exit(EXIT_FAILURE);
-        // }
-        // port = atoi(argv[1]);
-        port = 1125;
+        if(argc != 2)
+        {
+                printf("Incorrect number of arguments, should be 2, is %d",
+                argc);
+                exit(EXIT_FAILURE);
+        }
+        port = atoi(argv[1]);
         
         fprintf(stderr, "M: The DSAP example server is starting with " \
         "port %d...\n", port);
@@ -139,68 +138,65 @@ void manage_connection(int in, int out)
         while(1)
         {
                 bc = 0;
-                while(1)
-                {
-                        rc = 0;
-                        do {    
-                                temprc = read(in, &inbuf[rc],BUF_LEN);
-                                rc+=temprc-1;
-                                if(inbuf[rc-1] == '\r')
-                                {
-                                inbuf[rc] = '\0';
-                                inbuf[rc-1] = '\n';
-                                }
-                                else
-                                {
-                                inbuf[rc+1] = '\0';
-                                inbuf[rc] = '\n';  
-                                rc+=1;            
-                                }
-
-                        }while(inbuf[rc-2] != '&');
-                        inbuf[rc-2] = '\n';
-                        inbuf[rc-1] = '\0';
-                        if(rc > 0)
+                rc = 0;
+                do {    
+                        temprc = read(in, &inbuf[rc],BUF_LEN);
+                        rc+=temprc-1;
+                        if(inbuf[rc-1] == '\r')
                         {
-                                if((bc+rc) > BUF_LEN)
-                                {
-                                        fprintf(stderr, "\n%sRecieve buffer" \
-                                        "size exceeded.\n", prefix);
-                                        close(in);
-                                        exit(EXIT_SUCCESS);
-                                }
-                                fprintf(stderr, "%sHave read in:\n", prefix);
-                                /*dump string*/
-                                for(int i = 0; i < rc-2; i++)
-                                {
-                                        fprintf(stderr, "%s%d\t%c\n", prefix,
-                                        inbuf[i], inbuf[i]);
-                                }
-
-                                bc += rc;
-
-                                /* check if end of buffer */
-                                /*end of buffer checked in dowhile*/
-                                break;
-                        }
-                        else if(rc == 0)
-                        {
-                                fprintf(stderr, "\n%sClient " \
-                                "has closed to connection.\n",
-                                prefix);
-                                close(in);
-                                exit(EXIT_FAILURE);
+                        inbuf[rc] = '\0';
+                        inbuf[rc-1] = '\n';
                         }
                         else
                         {
-                                sprintf(prefix, "\tC %d: " \
-                                "While reading from " \
-                                "connection", getpid());
-                                perror(prefix);
-                                close(in);
-                                exit(EXIT_FAILURE);
+                        inbuf[rc+1] = '\0';
+                        inbuf[rc] = '\n';  
+                        rc+=1;            
                         }
+
+                }while(inbuf[rc-2] != '&');
+                inbuf[rc-2] = '\n';
+                inbuf[rc-1] = '\0';
+                if(rc > 0)
+                {
+                        if((bc+rc) > BUF_LEN)
+                        {
+                                fprintf(stderr, "\n%sRecieve buffer" \
+                                "size exceeded.\n", prefix);
+                                close(in);
+                                exit(EXIT_SUCCESS);
+                        }
+                        fprintf(stderr, "%sHave read in:\n", prefix);
+                        /*dump string*/
+                        for(int i = 0; i < rc-2; i++)
+                        {
+                                fprintf(stderr, "%s%d\t%c\n", prefix,
+                                inbuf[i], inbuf[i]);
+                        }
+
+                        bc += rc;
+
+                        /* check if end of buffer */
+                        /*end of buffer checked in dowhile*/
                 }
+                else if(rc == 0)
+                {
+                        fprintf(stderr, "\n%sClient " \
+                        "has closed to connection.\n",
+                        prefix);
+                        close(in);
+                        exit(EXIT_FAILURE);
+                }
+                else
+                {
+                        sprintf(prefix, "\tC %d: " \
+                        "While reading from " \
+                        "connection", getpid());
+                        perror(prefix);
+                        close(in);
+                        exit(EXIT_FAILURE);
+                }
+        
                 /*Telnet ends with /r/n so we need to chop
                 2 off of the end*/
                 //inbuf[bc-2] = '\0';

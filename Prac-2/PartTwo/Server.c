@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
                 exit(EXIT_FAILURE);
         }
         port = atoi(argv[1]);
-
         fprintf(stderr, "M: The DSAP example server is starting with " \
         "port %d...\n", port);
 
@@ -190,15 +189,14 @@ void manage_connection(int in, int out)
                         break;
                 }
                 revcnt = server_processing(inbuf, revbuf);
-
                 sprintf(outbuf, "The server recieved %d " \
-                "characters, which when the case are toggled" \
+                "characters, which when the case are toggled " \
                 "are:\n%s\n\nEnter next string: ", 
                 strlen(revbuf), revbuf);
                 write(out, outbuf, strlen(outbuf));
         }
-        fprintf(stderr, "\n%sClient has exited the session" \
-        "closing down.\n", prefix);
+        fprintf(stderr, "\n%sClient has exited the session. " \
+        "Closing down.\n", prefix);
         close(in);
 }
 

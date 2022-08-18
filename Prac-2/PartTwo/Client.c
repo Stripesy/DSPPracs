@@ -43,13 +43,13 @@ int main(int argc, char *argv[])
         
         printf("Connected.\n");
 
-        while(buffer[0] != 'X' || buffer[1] != '\0')
+        while(buffer[0] != 'X' || buffer[1] != '&')
         {
                 returnVal = read(sockfd, buffer, MAXLENGTH); // read reply
                 printf("Read state is %d.\n", returnVal);
                 // from socket
                 printf("Server : %s\n", buffer); // print server reply
-
+                memset(buffer, 0, MAXLENGTH);
                 printf("Client : "); // print client message
                 fgets(buffer, MAXLENGTH, stdin); // get input
                 buffer[strlen(buffer)-1] = '&';

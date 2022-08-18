@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Thu Aug 18 15:11:16 2022
+# Make data base, printed on Thu Aug 18 16:18:26 2022
 
 # Variables
 
@@ -15,7 +15,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # automatic
 ?F = $(notdir $?)
 # environment
-WSLENV = VSCODE_WSL_EXT_LOCATION/up:VSCODE_SERVER_TAR/up
+WSLENV = VSCODE_WSL_EXT_LOCATION/up
 # default
 .SHELLFLAGS := -c
 # automatic
@@ -49,9 +49,7 @@ PATH = /home/stripes/.vscode-server/bin/e4503b30fc78200f846c62cf8091b76ff5547662
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
-VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-5cd1c1ce-a0a6-4c75-84aa-fc4d144555f4.sock
-# environment
-VSCODE_SERVER_TAR = /mnt/c/Users/user/AppData/Local/Temp/vscode-remote-wsl/e4503b30fc78200f846c62cf8091b76ff5547662/vscode-server-stable-linux-x64.tar.gz
+VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-87f54b38-9d75-4806-9cf9-493b92e320de.sock
 # default
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
 # environment
@@ -63,7 +61,7 @@ PWD = /home/stripes/DSPPracs/Prac-2/PartTwo
 # default
 .LOADED := 
 # environment
-WSL_INTEROP = /run/WSL/2187_interop
+WSL_INTEROP = /run/WSL/7560_interop
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
@@ -95,6 +93,7 @@ USER = stripes
 # makefile
 .DEFAULT_GOAL := all
 # environment
+ 
 NAME = DESKTOP-20061890
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
@@ -143,7 +142,7 @@ TERM = xterm-256color
 # environment
 WSL_DISTRO_NAME = Ubuntu
 # variable set hash-table stats:
-# Load=66/1024=6%, Rehash=0, Collisions=4/98=4%
+# Load=65/1024=6%, Rehash=0, Collisions=4/97=4%
 
 # Pattern-specific Variable Values
 
@@ -177,7 +176,7 @@ all: Client test Server
 Client: Client.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'Client'
-#  Last modified 2022-08-18 15:08:13.671112154
+#  Last modified 2022-08-18 15:39:29.761092328
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 8):
@@ -226,7 +225,7 @@ test: test.c
 # Not a target:
 Client.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-18 15:08:12.231112169
+#  Last modified 2022-08-18 15:35:18.631094982
 #  File has been updated.
 #  Successfully updated.
 
@@ -264,6 +263,6 @@ clean:
 # strcache performance: lookups = 45 / hit rate = 51%
 # hash-table stats:
 # Load=22/8192=0%, Rehash=0, Collisions=1/45=2%
-# Finished Make data base on Thu Aug 18 15:11:16 2022
+# Finished Make data base on Thu Aug 18 16:18:26 2022
 
  

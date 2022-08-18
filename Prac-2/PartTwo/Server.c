@@ -24,13 +24,14 @@ int main(int argc, char *argv[])
         struct hostent *client_details;
         struct sigaction chldsig;
 
-        if(argc != 2)
-        {
-                printf("Incorrect number of arguments, should be 2, is %d",
-                argc);
-                exit(EXIT_FAILURE);
-        }
-        port = atoi(argv[1]);
+        // if(argc != 2)
+        // {
+        //         printf("Incorrect number of arguments, should be 2, is %d",
+        //         argc);
+        //         exit(EXIT_FAILURE);
+        // }
+        // port = atoi(argv[1]);
+        port = 2010;
         fprintf(stderr, "M: The DSAP example server is starting with " \
         "port %d...\n", port);
 
@@ -98,6 +99,7 @@ int main(int argc, char *argv[])
                 {
                         /*Child process*/
                         close(rssd);
+                        //-exec set follow-fork-mode child
                         manage_connection(essd, essd);
                         exit(EXIT_SUCCESS);
                 }
@@ -119,7 +121,7 @@ void manage_connection(int in, int out)
         char inbuf[BUF_LEN], outbuf[BUF_LEN],
         hostname[40], prefix[100], revbuf[BUF_LEN];
 
-        char end_of_data = '&';
+        char end_of_data = '\n';
         int i, revcnt;
 
         gethostname(hostname, 40);
@@ -137,6 +139,15 @@ void manage_connection(int in, int out)
                 while(1)
                 {
                         rc = read(in, inbuf,BUF_LEN);
+                        if(inbuf[rc-2] != '&' && inbuf[rc-2] != '\r')
+                        {
+                        do {
+                                sprintf(outbuf, "String must terminate with " \
+                                "&.\nPlease enter a new string: ");
+                                write(out, outbuf, strlen(outbuf));
+                                rc = read(in, inbuf,BUF_LEN);
+                        }while(inbuf[rc-2] != '&' && inbuf[rc-2 != 2]);
+                        }
                         if(rc > 0)
                         {
                                 if((bc+rc) > BUF_LEN)
@@ -153,7 +164,7 @@ void manage_connection(int in, int out)
                                         fprintf(stderr, "%s%d\t%c\n", prefix,
                                         inbuf[i], inbuf[i]);
                                 }
-                                memcpy(&inbuf[bc], inbuf, rc);
+
                                 bc += rc;
 
                                 /* check if end of buffer */
@@ -222,7 +233,7 @@ int server_processing(char *instr, char *outstr)
                         outstr[i] = c;
                 }
         }
-
+        outstr[len-1] = '\0';
         outstr[len] = '\0';
 
         return len;

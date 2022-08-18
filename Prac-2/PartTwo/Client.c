@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
                 memset(buffer, 0, MAXLENGTH);
                 printf("Client : "); // print client message
                 fgets(buffer, MAXLENGTH, stdin); // get input
-                buffer[strlen(buffer)-1] = '&';
                 returnVal = write(sockfd, buffer, strlen(buffer)); 
                 printf("Write state is %d.\n", returnVal);
                 // write message to socket

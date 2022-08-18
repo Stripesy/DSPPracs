@@ -10,6 +10,7 @@
 #include<ctype.h>
 #include<unistd.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
 #define BUF_LEN 1024
 
@@ -24,13 +25,14 @@ int main(int argc, char *argv[])
         struct hostent *client_details;
         struct sigaction chldsig;
 
-        if(argc != 2)
-        {
-                printf("Incorrect number of arguments, should be 2, is %d",
-                argc);
-                exit(EXIT_FAILURE);
-        }
-        port = atoi(argv[1]);
+        // if(argc != 2)
+        // {
+        //         printf("Incorrect number of arguments, should be 2, is %d",
+        //         argc);
+        //         exit(EXIT_FAILURE);
+        // }
+        // port = atoi(argv[1]);
+        port = 1125;
         
         fprintf(stderr, "M: The DSAP example server is starting with " \
         "port %d...\n", port);
@@ -117,11 +119,12 @@ int main(int argc, char *argv[])
 
 void manage_connection(int in, int out)
 {
-        int rc, bc; /*read count, buffer count*/
+        int rc = 0, bc, temprc; /*read count, buffer count*/
         char inbuf[BUF_LEN], outbuf[BUF_LEN],
         hostname[40], prefix[100], revbuf[BUF_LEN];
+        bool telnet = false;
 
-        char end_of_data = '\n';
+        char end_of_data = '\0';
         int i, revcnt;
 
         gethostname(hostname, 40);
@@ -129,7 +132,7 @@ void manage_connection(int in, int out)
         fprintf(stderr, "\n%sstarting up\n", prefix);
         sprintf(outbuf, "\n\nConnected to 300115 DSAP Example Server on host " \
         "%s\nEnter 'X' as the first character to exit.\nEnter string to be " \
-        "case toggled.\n", hostname);
+        "case toggled. Use a '&' character to end the message.\n", hostname);
 
         write(out, outbuf, strlen(outbuf));
 
@@ -138,16 +141,25 @@ void manage_connection(int in, int out)
                 bc = 0;
                 while(1)
                 {
-                        rc = read(in, inbuf,BUF_LEN);
-                        if(inbuf[rc-2] != '&' && inbuf[rc-2] != '\r')
-                        {
-                        do {
-                                sprintf(outbuf, "String must terminate with " \
-                                "&.\nPlease enter a new string: ");
-                                write(out, outbuf, strlen(outbuf));
-                                rc = read(in, inbuf,BUF_LEN);
-                        }while(inbuf[rc-2] != '&' && inbuf[rc-2 != 2]);
-                        }
+                        rc = 0;
+                        do {    
+                                temprc = read(in, &inbuf[rc],BUF_LEN);
+                                rc+=temprc-1;
+                                if(inbuf[rc-1] == '\r')
+                                {
+                                inbuf[rc] = '\0';
+                                inbuf[rc-1] = '\n';
+                                }
+                                else
+                                {
+                                inbuf[rc+1] = '\0';
+                                inbuf[rc] = '\n';  
+                                rc+=1;            
+                                }
+
+                        }while(inbuf[rc-2] != '&');
+                        inbuf[rc-2] = '\n';
+                        inbuf[rc-1] = '\0';
                         if(rc > 0)
                         {
                                 if((bc+rc) > BUF_LEN)
@@ -159,7 +171,7 @@ void manage_connection(int in, int out)
                                 }
                                 fprintf(stderr, "%sHave read in:\n", prefix);
                                 /*dump string*/
-                                for(int i = 0; i < rc; i++)
+                                for(int i = 0; i < rc-2; i++)
                                 {
                                         fprintf(stderr, "%s%d\t%c\n", prefix,
                                         inbuf[i], inbuf[i]);
@@ -168,11 +180,8 @@ void manage_connection(int in, int out)
                                 bc += rc;
 
                                 /* check if end of buffer */
-                                if(inbuf[rc-1] == end_of_data)
-                                {
-                                        inbuf[rc-1] = '\0';
-                                        break;
-                                }
+                                /*end of buffer checked in dowhile*/
+                                break;
                         }
                         else if(rc == 0)
                         {

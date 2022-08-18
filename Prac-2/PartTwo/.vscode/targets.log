@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Thu Aug 18 16:03:18 2022
+# Make data base, printed on Thu Aug 18 16:26:30 2022
 
 # Variables
 
@@ -35,7 +35,6 @@ _ = /home/stripes/.vscode-server/bin/e4503b30fc78200f846c62cf8091b76ff5547662/no
 # makefile (from 'Makefile', line 1)
 MAKEFILE_LIST :=  Makefile
 # 'override' directive
- 
 GNUMAKEFLAGS := 
 # environment
 XDG_DATA_DIRS = /usr/local/share:/usr/share:/var/lib/snapd/desktop
@@ -50,7 +49,7 @@ PATH = /home/stripes/.vscode-server/bin/e4503b30fc78200f846c62cf8091b76ff5547662
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
-VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-3595e92e-188f-4d47-8601-8e5166632f04.sock
+VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-11a96e3c-33a7-4ac7-828a-01355d52986a.sock
 # default
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
 # environment
@@ -62,7 +61,7 @@ PWD = /home/stripes/DSPPracs/Prac-2/PartTwo
 # default
 .LOADED := 
 # environment
-WSL_INTEROP = /run/WSL/6625_interop
+WSL_INTEROP = /run/WSL/8644_interop
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
@@ -94,7 +93,6 @@ USER = stripes
 # makefile
 .DEFAULT_GOAL := all
 # environment
- 
 NAME = DESKTOP-20061890
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
@@ -106,7 +104,6 @@ MAKE_COMMAND := make
 .VARIABLES := 
 # automatic
 *F = $(notdir $*)
- 
 # makefile
 MAKEFLAGS = pqrR
 # environment
@@ -220,7 +217,6 @@ test: test.c
 # automatic
 # ? := test.c
 # variable set hash-table stats:
- 
 # Load=8/32=25%, Rehash=0, Collisions=1/15=7%
 #  recipe to execute (from 'Makefile', line 8):
 	$(CC) $(CFLAGS) -o $@ $<
@@ -266,6 +262,6 @@ clean:
 # strcache performance: lookups = 45 / hit rate = 51%
 # hash-table stats:
 # Load=22/8192=0%, Rehash=0, Collisions=1/45=2%
-# Finished Make data base on Thu Aug 18 16:03:18 2022
+# Finished Make data base on Thu Aug 18 16:26:30 2022
 
  

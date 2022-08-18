@@ -51,8 +51,11 @@ int main(int argc, char *argv[])
                 printf("Server : %s\n", buffer); // print server reply
                 memset(buffer, 0, MAXLENGTH);
                 printf("Client : "); // print client message
+                do
+                {
                 fgets(buffer, MAXLENGTH, stdin); // get input
-                returnVal = write(sockfd, buffer, strlen(buffer)); 
+                returnVal = write(sockfd, buffer, strlen(buffer));
+                } while(buffer[strlen(buffer)-2] != '&');
                 printf("Write state is %d.\n", returnVal);
                 // write message to socket
 

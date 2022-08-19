@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 
         while(buffer[0] != 'X' || buffer[1] != '&')
         {
+                memset(buffer, 0, MAXLENGTH);
                 returnVal = read(sockfd, buffer, MAXLENGTH); // read reply
                 printf("Read state is %d.\n", returnVal);
                 // from socket

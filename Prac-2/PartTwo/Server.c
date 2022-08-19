@@ -118,9 +118,10 @@ int main(int argc, char *argv[])
 
 void manage_connection(int in, int out)
 {
-        int rc = 0, bc, temprc; /*read count, buffer count*/
+        int rc = 0, bc, temprc, msglen; /*read count, buffer count*/
         char inbuf[BUF_LEN], outbuf[BUF_LEN],
-        hostname[40], prefix[100], revbuf[BUF_LEN];
+        hostname[40], prefix[100], revbuf[BUF_LEN-100]; 
+        //revbuf is smaller to compensate for strings placed into it
         bool telnet = false;
 
         char end_of_data = '\0';
@@ -205,10 +206,11 @@ void manage_connection(int in, int out)
                         break;
                 }
                 revcnt = server_processing(inbuf, revbuf);
+                msglen = strlen(revbuf);
                 sprintf(outbuf, "The server recieved %d " \
                 "characters, which when the case are toggled " \
                 "are:\n%s\n\nEnter next string: ", 
-                strlen(revbuf), revbuf);
+                msglen, revbuf);
                 write(out, outbuf, strlen(outbuf));
         }
         fprintf(stderr, "\n%sClient has exited the session. " \

@@ -23,9 +23,9 @@ void print_box(float l, float w, float h, float sa, float v, float m)
 	return;
 }
 
-void print_mail(float c)
+void print_mail(float* c)
 {
-	printf("The cost of postage is %f\n", c);
+	printf("The cost of postage is %f\n", *c);
 
 	return;
 }
@@ -52,6 +52,7 @@ int main(int ac, char **av)
 	dims.length = atof(av[2]);
 	dims.width = atof(av[3]);
 	dims.height = atof(av[4]);
+	/* make the mass equal to the fifth arg*/
 	mass = atof(av[5]);
 
 	/* create a connection handle to make rpc’s */
@@ -82,7 +83,7 @@ int main(int ac, char **av)
 	/* print out the results */
 	print_box(dims.length, dims.width, dims.height, res->surface, res->volume, mass);
 
-	print_mail(*mailRes);
+	print_mail(mailRes);
 
 	/* free up the RPC handle */
 	clnt_destroy(c_handle);

@@ -1,0 +1,190 @@
+Determining the rules the postoffice uses.
+
+Surface area and Volume: Post office uses Rectangular Prism formula rounding each value up to the next multiple of three.
+
+Cost is Volume x Mass but the mass is capped at nearest multiple of 3 rounded down?
+
+Determing the surface area.
+
+
+Test 1:
+        Length: 1
+        Width: 1
+        Height: 1
+Result:
+        Surface Area: 54
+Test 2:
+        Length: 2
+        Width: 2
+        Height: 2
+Result:
+        Surface Area: 54
+Test 3:
+        Length: 4
+        Width: 4
+        Height: 4
+Result:
+        Surface Area: 216
+Test 4:
+        Length: 3
+        Width: 3
+        Height: 4
+Result:
+        Surface Area: 90
+
+Surface Area has a minimum value of 54. Incorrect.
+Has multiple fixed box sizes up to a certain size?
+
+Test:
+        Length: 0
+        Width: 1
+        Height: 1
+Result:
+        Surface Area: 18.
+
+Surface area does not have a minimum value.
+
+
+Test:
+        Length: 12
+        Width: 6
+        Height: 6
+Result:
+        Surface Area: 360
+
+Occasionally follows the formula of Rectangular Prism Formula but not consistently.
+
+Test:
+        Length: 12
+        Width: 5
+        Height: 6
+Result:
+        Surface Area: 360
+
+Fixed sizes while using Rectangular Prism Formula?
+
+Test:
+        Length: 3
+        Width: 3
+        Height: 3
+Result:
+        Surface Area: 54
+
+Test:
+        Length: 3
+        Width: 3 
+        Height: 4
+
+Test:
+        Length: 6
+        Width : 6
+        Height: 6
+Result:
+        Surface Area: 360
+
+Fixed sizes with size incrementing by 3x3x3. E.g. 3x3x3, 6x6x6, 9x9x9.
+
+Test:
+        Length: 4
+        Width : 3
+        Height: 5
+Result:
+        Surface Area : 144
+
+No fixed size increase by 3x3x3's.
+
+Test:
+        Length: 8
+        Width : 8
+        Height: 8
+Result:
+        Surface Area : 486.
+
+486 is the Surface Area of 9x9x9.
+Increases by 3x3x3 if the dimensions are equal.
+
+Switching to Volume to get another perspective.
+
+Test:
+        Length: 3 
+        Width: 3
+        Height: 3
+Result:
+        Volume : 27
+Test:
+        Length: 3 
+        Width: 3
+        Height: 4
+Result:
+        Volume : 54
+Test:
+        Length: 6
+        Width: 3
+        Height: 3
+Result:
+        Volume : 54
+Doesn't increase by 3x3x3's. Each individual value increments by 3.
+Test:
+        Length: 8
+        Width: 4
+        Height: 4
+Result:
+        Volume : 324
+Test:
+        Length: 8
+        Width: 6
+        Height: 6
+Result:
+        Volume : 324
+
+324 is the Surface Area of a Rectangular prism with the values 8x6x6.
+
+Post office uses Rectangular Prism formula rounding each value up to the next multiple of three for volume.
+
+Working out Cost.
+
+Test:
+        Surface Area: 54
+        Mass : 2
+Result: 
+        Cost : 36
+Test:
+        Surface Area: 54
+        Mass : 3
+Result: 
+        Cost : 54
+
+Incrementing by 18?
+
+Test:
+        Surface Area: 54
+        Mass : 4
+Result: 
+        Cost : 81
+Test:
+        Dimensions : 3x3x3
+        Surface Area: 54
+        Mass : 6
+Result: 
+        Cost : 81
+Capped at 81. 81/27 is 3?
+
+Test:
+        Dimensions : 5x5x5
+        Surface Area: 216
+        Mass : 100
+Result: 
+        Cost : 216
+
+Test:
+        Dimensions : 5x5x5
+        Surface Area: 216
+        Mass : 1000
+Result: 
+        Cost : 216
+Cost is VolumexMass but the mass is capped at nearest multiple of 3 rounded down?
+
+
+
+
+

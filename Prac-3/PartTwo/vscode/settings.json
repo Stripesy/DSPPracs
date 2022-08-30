@@ -1,0 +1,15 @@
+{
+    "[c]": {
+        "editor.tabSize": 8,
+        "editor.rulers": [
+            {
+                "column": 80
+            }
+        ]
+    },
+    "files.associations": {
+        "stdlib.h": "c",
+        "in.h": "c",
+        "types.h": "c"
+    }
+}

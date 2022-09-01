@@ -4,7 +4,7 @@
    this is the client code
    compile it with the rpcgen-ed code
 
-   cc box_main.c box_clnt.c box_xdr.c -o box_client
+   cc box_main.c box_2_clnt.c box_2_xdr.c -o box_client
 */
 
 #include <stdio.h>

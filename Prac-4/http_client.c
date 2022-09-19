@@ -9,7 +9,8 @@
 #include<unistd.h>
 #include<string.h>
 
-#define BUFFERSIZE 100000
+#define BUFFERSIZE 64000
+/*Get bodies can be between 2-8kb. 8kb translates to 64000 bits.*/
 
 
 int main(int argc, char* argv[])
@@ -20,18 +21,18 @@ int main(int argc, char* argv[])
         struct hostent *server_host;
         int portNo = 80;
         char reqBuffer[40];
-        char flag[2];
+        char flag[2] = "-g";
 
-        if(argc != 3) 
-        {
-                fprintf(stderr, "Usage: %s flag[-g -h] website \n", argv[0]);
-                exit(EXIT_FAILURE);
-        }
-        if(strcmp(argv[1], "-h") == 0) 
+        // if(argc != 3) 
+        // {
+        //         fprintf(stderr, "Usage: %s flag[-g -h] website \n", argv[0]);
+        //         exit(EXIT_FAILURE);
+        // }
+        if(strcmp(flag, "-h") == 0) 
         {
                 memcpy(&reqBuffer, "HEAD / HTTP/1.1\r\n\n", sizeof("HEAD / HTTP/1.1\r\n\n"));
         }
-        else if(strcmp(argv[1], "-g") == 0) 
+        else if(strcmp(flag, "-g") == 0) 
         {
                 memcpy(&reqBuffer, "GET / HTTP/1.1\r\n\n", sizeof("GET / HTTP/1.1\r\n\n"));
         }
@@ -40,7 +41,7 @@ int main(int argc, char* argv[])
                 fprintf(stderr, "Incorrect flag\nUsage: %s flag[-g -h] website\n", argv[0]);
                 exit(EXIT_FAILURE);
         }
-        server_host = gethostbyname(argv[2]);
+        server_host = gethostbyname("www.google.com");
         if(server_host == NULL)
         {
                 fprintf(stderr, "Could not find host.\n");

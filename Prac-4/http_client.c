@@ -6,9 +6,12 @@
 #include<stdio.h>
 #include<string.h>
 #include<errno.h>
-#include <unistd.h>
+#include<unistd.h>
+#include<string.h>
 
-#define BUFFERSIZE 2048
+#define BUFFERSIZE 25000
+
+void parse_http(int csd);
 
 int main(int argc, char* argv[])
 {
@@ -17,14 +20,28 @@ int main(int argc, char* argv[])
         struct sockaddr_in server_addr; 
         struct hostent *server_host;
         int portNo = 80;
-        char reqBuffer[40] = "HEAD / HTTP/1.1\r\n\n";
+        char reqBuffer[40];
+        char flag[2] = "-g";
 
-        if(argc != 2) 
+        // if(argc != 3) 
+        // {
+        //         fprintf(stderr, "Usage: %s flag[-g -h] website \n", argv[0]);
+        //         exit(EXIT_FAILURE);
+        // }
+        if(strcmp(flag, "-h") == 0) 
         {
-                fprintf(stderr, "Usage: %s website \n", argv[0]);
+                memcpy(&reqBuffer, "HEAD / HTTP/1.1\r\n\n", sizeof("HEAD / HTTP/1.1\r\n\n"));
+        }
+        else if(strcmp(flag, "-g") == 0) 
+        {
+                memcpy(&reqBuffer, "GET / HTTP/1.1\r\n\n", sizeof("GET / HTTP/1.1\r\n\n"));
+        }
+        else 
+        {
+                fprintf(stderr, "Incorrect flag\nUsage: %s flag[-g -h] website\n", argv[0]);
                 exit(EXIT_FAILURE);
         }
-        server_host = gethostbyname(argv[1]);
+        server_host = gethostbyname("www.google.com");
         if(server_host == NULL)
         {
                 fprintf(stderr, "Could not find host.\n");
@@ -47,7 +64,7 @@ int main(int argc, char* argv[])
                 perror("While connect()");
                 exit(EXIT_FAILURE);
         }
-        printf("Retrieving HTML Head\n");
+        printf("Retrieving HTML Reply\n");
         if(write(csd, reqBuffer, strlen(reqBuffer)) <= 0) 
         {
                 perror("While write()");
@@ -62,9 +79,9 @@ int main(int argc, char* argv[])
         }
         if(buffer[recvLen-2] != '\r' || buffer[recvLen-1] != '\n')
         {
-                printf("Buffer length exceeded.");
+                fprintf(stderr, "Buffer length exceeded.");
                 exit(EXIT_FAILURE);
         }
-        printf("%s", buffer);
+        fprintf(stdout, "%s", buffer);
         close(csd);
 }

@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
                 perror("While read()");
                 exit(EXIT_FAILURE);
         }
-        if(buffer[recvLen-2] != "\r" || buffer[recvLen-1] != "\n")
+        if(buffer[recvLen-2] != '\r' || buffer[recvLen-1] != '\n')
         {
                 printf("Buffer length exceeded.");
                 exit(EXIT_FAILURE);

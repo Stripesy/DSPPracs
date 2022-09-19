@@ -9,9 +9,8 @@
 #include<unistd.h>
 #include<string.h>
 
-#define BUFFERSIZE 25000
+#define BUFFERSIZE 100000
 
-void parse_http(int csd);
 
 int main(int argc, char* argv[])
 {
@@ -21,18 +20,18 @@ int main(int argc, char* argv[])
         struct hostent *server_host;
         int portNo = 80;
         char reqBuffer[40];
-        char flag[2] = "-g";
+        char flag[2];
 
-        // if(argc != 3) 
-        // {
-        //         fprintf(stderr, "Usage: %s flag[-g -h] website \n", argv[0]);
-        //         exit(EXIT_FAILURE);
-        // }
-        if(strcmp(flag, "-h") == 0) 
+        if(argc != 3) 
+        {
+                fprintf(stderr, "Usage: %s flag[-g -h] website \n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
+        if(strcmp(argv[1], "-h") == 0) 
         {
                 memcpy(&reqBuffer, "HEAD / HTTP/1.1\r\n\n", sizeof("HEAD / HTTP/1.1\r\n\n"));
         }
-        else if(strcmp(flag, "-g") == 0) 
+        else if(strcmp(argv[1], "-g") == 0) 
         {
                 memcpy(&reqBuffer, "GET / HTTP/1.1\r\n\n", sizeof("GET / HTTP/1.1\r\n\n"));
         }
@@ -41,7 +40,7 @@ int main(int argc, char* argv[])
                 fprintf(stderr, "Incorrect flag\nUsage: %s flag[-g -h] website\n", argv[0]);
                 exit(EXIT_FAILURE);
         }
-        server_host = gethostbyname("www.google.com");
+        server_host = gethostbyname(argv[2]);
         if(server_host == NULL)
         {
                 fprintf(stderr, "Could not find host.\n");
@@ -77,7 +76,13 @@ int main(int argc, char* argv[])
                 perror("While read()");
                 exit(EXIT_FAILURE);
         }
-        if(buffer[recvLen-2] != '\r' || buffer[recvLen-1] != '\n')
+        if(buffer[9] != '2' || buffer[10] != '0' || buffer[11] != '0') 
+        {
+                fprintf(stdout ,"Status Code: %c%c%c\n", buffer[9], buffer[10], buffer[11]);
+                exit(EXIT_FAILURE);
+        }
+        if(buffer[recvLen-4] != '\r' || buffer[recvLen-3] != '\n' 
+           || buffer[recvLen-2] != '\r' || buffer[recvLen-1] != '\n')
         {
                 fprintf(stderr, "Buffer length exceeded.");
                 exit(EXIT_FAILURE);

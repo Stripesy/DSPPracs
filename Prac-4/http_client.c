@@ -20,13 +20,12 @@ int main(int argc, char* argv[])
         struct hostent *server_host;
         int portNo = 80;
         char reqBuffer[BUFFERSIZE];
-        char flag[2] = "-g";
 
-        // if(argc != 3) 
-        // {
-        //         fprintf(stderr, "Usage: %s flag[-g -h] website \n", argv[0]);
-        //         exit(EXIT_FAILURE);
-        // }
+        if(argc != 3) 
+        {
+                fprintf(stderr, "Usage: %s flag[-g -h] website \n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
         server_host = gethostbyname("www.google.com");
         if(server_host == NULL)
         {
@@ -51,17 +50,23 @@ int main(int argc, char* argv[])
                 exit(EXIT_FAILURE);
         }
         printf("Retrieving HTML Reply\n");
-        if(strcmp(flag, "-h") == 0) 
+        if(strcmp(argv[1], "-h") == 0) 
         {
-        memcpy(&reqBuffer, "HEAD / HTTP/1.1\r\n\r\n", sizeof("HEAD / HTTP/1.1\r\n\r\n"));
+        /// Form request
+        snprintf(reqBuffer, BUFFERSIZE, 
+                "HEAD / HTTP/1.0\r\n" 
+                "Host: %s\r\n" 
+                "Connection: close\r\n"
+                "\r\n", argv[2]);
         }
-        else if(strcmp(flag, "-g") == 0) 
+        else if(strcmp(argv[1], "-g") == 0) 
         {
         /// Form request
         snprintf(reqBuffer, BUFFERSIZE, 
                 "GET / HTTP/1.0\r\n" 
                 "Host: %s\r\n" 
-                "\r\n", "www.google.com");
+                "Connection: close\r\n"
+                "\r\n", argv[2]);
         }
         else 
         {
@@ -75,11 +80,18 @@ int main(int argc, char* argv[])
         }
         printf("%s\n",reqBuffer);
         ssize_t recvLen = 0;
+        int i = 0;
         while((recvLen = read(csd, buffer, sizeof(buffer))) > 0)
         {
+                if(!(strstr(buffer, "HTTP/1.0 200 OK")) && i == 0)
+                {
+                        fprintf(stderr, "Status code not OK");
+                        exit(EXIT_FAILURE);
+                }
                 buffer[recvLen] = '\0';
 
                 printf("%s", buffer);
+                i++;
 
         }
         if(recvLen < 0)

@@ -9,8 +9,7 @@
 #include<unistd.h>
 #include<string.h>
 
-#define BUFFERSIZE 64000
-/*Get bodies can be between 2-8kb. 8kb translates to 64000 bits.*/
+#define BUFFERSIZE 8129
 
 
 int main(int argc, char* argv[])
@@ -20,7 +19,7 @@ int main(int argc, char* argv[])
         struct sockaddr_in server_addr; 
         struct hostent *server_host;
         int portNo = 80;
-        char reqBuffer[40];
+        char reqBuffer[BUFFERSIZE];
         char flag[2] = "-g";
 
         // if(argc != 3) 
@@ -28,19 +27,6 @@ int main(int argc, char* argv[])
         //         fprintf(stderr, "Usage: %s flag[-g -h] website \n", argv[0]);
         //         exit(EXIT_FAILURE);
         // }
-        if(strcmp(flag, "-h") == 0) 
-        {
-                memcpy(&reqBuffer, "HEAD / HTTP/1.1\r\n\n", sizeof("HEAD / HTTP/1.1\r\n\n"));
-        }
-        else if(strcmp(flag, "-g") == 0) 
-        {
-                memcpy(&reqBuffer, "GET / HTTP/1.1\r\n\n", sizeof("GET / HTTP/1.1\r\n\n"));
-        }
-        else 
-        {
-                fprintf(stderr, "Incorrect flag\nUsage: %s flag[-g -h] website\n", argv[0]);
-                exit(EXIT_FAILURE);
-        }
         server_host = gethostbyname("www.google.com");
         if(server_host == NULL)
         {
@@ -65,29 +51,41 @@ int main(int argc, char* argv[])
                 exit(EXIT_FAILURE);
         }
         printf("Retrieving HTML Reply\n");
+        if(strcmp(flag, "-h") == 0) 
+        {
+        memcpy(&reqBuffer, "HEAD / HTTP/1.1\r\n\r\n", sizeof("HEAD / HTTP/1.1\r\n\r\n"));
+        }
+        else if(strcmp(flag, "-g") == 0) 
+        {
+        /// Form request
+        snprintf(reqBuffer, BUFFERSIZE, 
+                "GET / HTTP/1.0\r\n" 
+                "Host: %s\r\n" 
+                "\r\n", "www.google.com");
+        }
+        else 
+        {
+                fprintf(stderr, "Incorrect flag\nUsage: %s flag[-g -h] website\n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
         if(write(csd, reqBuffer, strlen(reqBuffer)) <= 0) 
         {
                 perror("While write()");
                 exit(EXIT_FAILURE);
         }
         printf("%s\n",reqBuffer);
-        ssize_t recvLen = read(csd, buffer, sizeof(buffer));
+        ssize_t recvLen = 0;
+        while((recvLen = read(csd, buffer, sizeof(buffer))) > 0)
+        {
+                buffer[recvLen] = '\0';
+
+                printf("%s", buffer);
+
+        }
         if(recvLen < 0)
         {
                 perror("While read()");
                 exit(EXIT_FAILURE);
         }
-        if(buffer[9] != '2' || buffer[10] != '0' || buffer[11] != '0') 
-        {
-                fprintf(stdout ,"Status Code: %c%c%c\n", buffer[9], buffer[10], buffer[11]);
-                exit(EXIT_FAILURE);
-        }
-        if(buffer[recvLen-4] != '\r' || buffer[recvLen-3] != '\n' 
-           || buffer[recvLen-2] != '\r' || buffer[recvLen-1] != '\n')
-        {
-                fprintf(stderr, "Buffer length exceeded.");
-                exit(EXIT_FAILURE);
-        }
-        fprintf(stdout, "%s", buffer);
         close(csd);
 }

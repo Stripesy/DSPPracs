@@ -20,13 +20,14 @@ int main(int argc, char* argv[])
         struct hostent *server_host;
         int portNo = 80;
         char reqBuffer[BUFFERSIZE];
+        char* substring;
 
         if(argc != 3) 
         {
                 fprintf(stderr, "Usage: %s flag[-g -h] website \n", argv[0]);
                 exit(EXIT_FAILURE);
         }
-        server_host = gethostbyname("www.google.com");
+        server_host = gethostbyname(argv[2]);
         if(server_host == NULL)
         {
                 fprintf(stderr, "Could not find host.\n");
@@ -83,16 +84,34 @@ int main(int argc, char* argv[])
         int i = 0;
         while((recvLen = read(csd, buffer, sizeof(buffer))) > 0)
         {
-                if(!(strstr(buffer, "HTTP/1.0 200 OK")) && i == 0)
+                if(strcmp(argv[1], "-g") == 0)
                 {
-                        fprintf(stderr, "Status code not OK");
-                        exit(EXIT_FAILURE);
-                }
                 buffer[recvLen] = '\0';
 
                 printf("%s", buffer);
                 i++;
-
+                }
+                else if(strcmp(argv[1], "-h") == 0)
+                {
+                        char* substring;
+                        substring = strtok(buffer, "\r\n");
+                        while(substring != NULL)
+                        {
+                                if(strstr(substring, "HTTP/1.0") != NULL)
+                                {
+                                        printf("%s\n", substring);
+                                }
+                                else if(strstr(substring, "Content-Type") != NULL)
+                                {
+                                        printf("%s\n", substring);
+                                }
+                                else if(strstr(substring, "Last-Modified") != NULL)
+                                {
+                                        printf("%s\n", substring);
+                                }
+                                substring = strtok(NULL, "\r\n");
+                        }
+                }
         }
         if(recvLen < 0)
         {

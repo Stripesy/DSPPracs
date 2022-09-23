@@ -9,7 +9,7 @@
 #include<unistd.h>
 #include<string.h>
 
-#define BUFFERSIZE 8129
+#define BUFFERSIZE 1024
 
 
 int main(int argc, char* argv[])
@@ -25,6 +25,29 @@ int main(int argc, char* argv[])
         if(argc != 3) 
         {
                 fprintf(stderr, "Usage: %s flag[-g -h] website \n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
+        if(strcmp(argv[1], "-h") == 0) 
+        {
+        /// Form request
+        snprintf(reqBuffer, BUFFERSIZE, 
+                "HEAD / HTTP/1.1\r\n" 
+                "Host: %s\r\n" 
+                "Connection: close\r\n"
+                "\r\n", argv[2]);
+        }
+        else if(strcmp(argv[1], "-g") == 0) 
+        {
+        /// Form request
+        snprintf(reqBuffer, BUFFERSIZE, 
+                "GET / HTTP/1.1\r\n" 
+                "Host: %s\r\n" 
+                "Connection: close\r\n"
+                "\r\n", argv[2]);
+        }
+        else 
+        {
+                fprintf(stderr, "Incorrect flag\nUsage: %s flag[-g -h] website\n", argv[0]);
                 exit(EXIT_FAILURE);
         }
         server_host = gethostbyname(argv[2]);
@@ -51,29 +74,6 @@ int main(int argc, char* argv[])
                 exit(EXIT_FAILURE);
         }
         printf("Retrieving HTML Reply\n");
-        if(strcmp(argv[1], "-h") == 0) 
-        {
-        /// Form request
-        snprintf(reqBuffer, BUFFERSIZE, 
-                "HEAD / HTTP/1.0\r\n" 
-                "Host: %s\r\n" 
-                "Connection: close\r\n"
-                "\r\n", argv[2]);
-        }
-        else if(strcmp(argv[1], "-g") == 0) 
-        {
-        /// Form request
-        snprintf(reqBuffer, BUFFERSIZE, 
-                "GET / HTTP/1.0\r\n" 
-                "Host: %s\r\n" 
-                "Connection: close\r\n"
-                "\r\n", argv[2]);
-        }
-        else 
-        {
-                fprintf(stderr, "Incorrect flag\nUsage: %s flag[-g -h] website\n", argv[0]);
-                exit(EXIT_FAILURE);
-        }
         if(write(csd, reqBuffer, strlen(reqBuffer)) <= 0) 
         {
                 perror("While write()");
@@ -82,22 +82,44 @@ int main(int argc, char* argv[])
         printf("%s\n",reqBuffer);
         ssize_t recvLen = 0;
         int i = 0;
-        while((recvLen = read(csd, buffer, sizeof(buffer))) > 0)
+        int endOfHead = 0; // used as a boolean
+        while((recvLen = read(csd, buffer, sizeof(buffer)-1)) > 0)
         {
                 if(strcmp(argv[1], "-g") == 0)
                 {
                 buffer[recvLen] = '\0';
 
+                if(!strstr(buffer, "HTTP/1.1 200 OK") && i == 0)
+                {
+                        substring = strtok(buffer, "\r\n");
+                        printf("%s", substring);
+                        exit(EXIT_FAILURE);
+                }
+
+                if(endOfHead == 1)
+                {
                 printf("%s", buffer);
+                }
+
+                if(endOfHead == 0)
+                {
+                        if((substring = strstr(buffer, "\r\n\r\n")) != NULL)
+                        {
+                                substring += 4*sizeof(char); 
+                                /* Move substring pointer forward to skip
+                                \r\n\r\n\*/
+                                endOfHead = 1;
+                                printf("%s", substring);
+                        }
+                }
                 i++;
                 }
                 else if(strcmp(argv[1], "-h") == 0)
                 {
-                        char* substring;
                         substring = strtok(buffer, "\r\n");
                         while(substring != NULL)
                         {
-                                if(strstr(substring, "HTTP/1.0") != NULL)
+                                if(strstr(substring, "HTTP/1.1") != NULL)
                                 {
                                         printf("%s\n", substring);
                                 }

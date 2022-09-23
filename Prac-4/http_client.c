@@ -98,7 +98,29 @@ int main(int argc, char* argv[])
 
                 if(endOfHead == 1)
                 {
+                if(!strstr(buffer, "HTTP/1.1 200 OK") && i == 0)
+                {
+                        substring = strtok(buffer, "\r\n");
+                        printf("%s", substring);
+                        exit(EXIT_FAILURE);
+                }
+
+                if(endOfHead == 1)
+                {
                 printf("%s", buffer);
+                }
+
+                if(endOfHead == 0)
+                {
+                        if((substring = strstr(buffer, "\r\n\r\n")) != NULL)
+                        {
+                                substring += 4*sizeof(char); 
+                                /* Move substring pointer forward to skip
+                                \r\n\r\n\*/
+                                endOfHead = 1;
+                                printf("%s", substring);
+                        }
+                }
                 }
 
                 if(endOfHead == 0)

@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
         char buffer[BUFFERSIZE], request[BUFFERSIZE], response[BUFFERSIZE];
         char jacknjill[3000];
         int recvLen;
-        int port = 6003;
+        int port = 6007;
         char* line;
         char* word;
         struct sigaction chldsig;
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 
                                 for(int i = 0; i < recvLen; i++)
                                 {
-                                        toupper(buffer[i]);
+                                        buffer[i] = toupper(buffer[i]);
                                 }
         
                                 totalSize += recvLen;
@@ -187,6 +187,11 @@ int main(int argc, char* argv[])
                                         }
                                         line = strtok(NULL, "\r\n");
                                         it++;
+                                }
+                                if(closeCon)
+                                {
+                                        close(connfd);
+                                        exit(EXIT_SUCCESS);
                                 }
                         }
                 }

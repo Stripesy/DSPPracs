@@ -25,11 +25,12 @@ int main(int argc, char* argv[])
         char buffer[BUFFERSIZE];
         char response[BUFFERSIZE];
         int recvLen;
-        int port = 2006;
+        int port = 2013;
         char* word;
-        char* saveptr;
         struct sigaction chldsig;
         char verb[VERBSIZE];
+        bool connection;
+        bool host;
 
         // if(argc != 2) 
         // {
@@ -80,11 +81,19 @@ int main(int argc, char* argv[])
                 {
                         /*Child process*/
                         close(sockfd);
-                        it = 0; // 0 = VERB, 1 = DOCUMENT, 2 = VERSION.
                         while((recvLen = read(connfd, buffer, sizeof(buffer)-1)) > 0)
                         {       
+                                it = 0; // 0 = VERB, 1 = DOCUMENT, 2 = VERSION.
+                                connection = false;
+                                host = false;
                                 buffer[recvLen-2] = '\0';
                                 word = strtok(buffer, " ");
+                                /*
+
+                                ADD CASE INSENSITIVE STRING COMPARISONS
+
+                                */
+
                                 while(word != NULL)
                                 {       
                                         switch(it)
@@ -96,25 +105,43 @@ int main(int argc, char* argv[])
                                                                 perror("Verb Overflow");
                                                                 exit(EXIT_FAILURE);
                                                         }
-                                                        else if(strcmp(word, "HEAD") == 0)
+                                                        else if(strcasecmp(word, "HEAD") == 0)
                                                         {
                                                                 snprintf(verb,sizeof("HEAD") ,"HEAD");
                                                                 /* CHANGE TO ASPRINTF */
                                                         }
-                                                        else if(strcmp(word, "GET") == 0)
+                                                        else if(strcasecmp(word, "GET") == 0)
                                                         {
                                                                 snprintf(verb,sizeof("GET") ,"GET");
                                                         }
+                                                        else if(strcasecmp(word, "Connection:") == 0)
+                                                        {
+                                                                connection = true;
+                                                        }
+                                                        else if(strcasecmp(word, "Host:") == 0)
+                                                        {
+                                                                host = true;
+                                                        }
                                                         else
                                                         {
-                                                                write(connfd, "501 Not Implemented",
-                                                                sizeof("501 Not Implemented"));
+                                                                write(connfd, "501 Not Implemented\n",
+                                                                sizeof("501 Not Implemented\n"));
                                                                 close(connfd);
+                                                                exit(EXIT_SUCCESS);
                                                         }
                                                         break;
                                                 }
                                                 case 1:
                                                 {
+                                                        if(((strcasecmp(word, "close") == 0) && connection))
+                                                        {
+                                                                exit(EXIT_SUCCESS);
+                                                        }
+                                                        else if(host)
+                                                        {
+                                                                printf("Do something with host pls");
+                                                                exit(EXIT_SUCCESS);
+                                                        }
                                                         break;
                                                 }
                                                 case 2:
@@ -130,9 +157,7 @@ int main(int argc, char* argv[])
                                         word = strtok(NULL, " ");
                                         it++;
                                 }
-                                break;
                         }
-                        exit(EXIT_SUCCESS);
                 }
                 else
                 {

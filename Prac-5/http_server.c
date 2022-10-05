@@ -14,22 +14,31 @@
 #include<stdbool.h>
 
 #define BUFFERSIZE 1024
-#define VERBSIZE 100
 
 void handle_sigchld(int signalCode);
 
 int main(int argc, char* argv[])
 {
-        int sockfd, len, connfd, pid, it;
+        int sockfd, len, connfd, pid, totalSize, it, randomNum, lineCount;
         struct sockaddr_in server, client;
         struct hostent *client_details;
-        char buffer[BUFFERSIZE];
-        char response[BUFFERSIZE];
+        char buffer[BUFFERSIZE], request[BUFFERSIZE], response[BUFFERSIZE];
+        char jacknjill[3000];
         int recvLen;
-        int port = 1894;
+        int port = 6003;
+        char* line;
         char* word;
         struct sigaction chldsig;
-        char verb[VERBSIZE];
+        char fileLine[3000];
+        bool closeCon;
+        FILE *file;
+
+        if((file = fopen("jack_jill.txt", "r+")) == NULL)
+        {
+                fprintf(stderr, "While opening jack_jill.txt");
+                exit(EXIT_FAILURE);
+        }
+
 
         // if(argc != 2) 
         // {
@@ -64,10 +73,11 @@ int main(int argc, char* argv[])
                 perror("While listen()");
                 exit(EXIT_FAILURE);
         }
-
         while(1)
         {
                 len = sizeof(client);
+                bzero(&request, BUFFERSIZE);
+                closeCon = false;
                 connfd = accept(sockfd, (struct sockaddr *)&client, &len);
                 //-exec set follow-fork-mode child
                 if(connfd < 0)
@@ -78,125 +88,104 @@ int main(int argc, char* argv[])
                 /*Create a process to handle new client.*/
                 if( (pid = fork()) == 0 )
                 {
+                        srand(time(NULL));
+                        randomNum = rand() % 103 + 1;
+                        bzero(&jacknjill, 3000);
+                        bzero(&fileLine, 3000);
+                        while(fgets(fileLine, sizeof(fileLine), file))
+                        {
+                                strcat(jacknjill, fileLine);
+                                lineCount++;
+                                if(lineCount == randomNum)
+                                {
+                                        break;
+                                }
+                        }
                         /*Child process*/
                         close(sockfd);
+                        totalSize = 0;
                         while((recvLen = read(connfd, buffer, sizeof(buffer)-1)) > 0)
                         {       
-                                it = 0; // 0 = VERB, 1 = DOCUMENT, 2 = VERSION.
-                                buffer[recvLen-2] = '\0';
-                                word = strtok(buffer, " ");
-                                /*
+                                buffer[recvLen] = '\0';
 
-                                ADD CASE INSENSITIVE STRING COMPARISONS
-
-                                */
-
-                                while(word != NULL)
-                                {       
-                                        switch(it)
+                                for(int i = 0; i < recvLen; i++)
+                                {
+                                        toupper(buffer[i]);
+                                }
+        
+                                totalSize += recvLen;
+                                if(totalSize >= BUFFERSIZE)
+                                {
+                                        fprintf(stderr, "Buffer overflow");
+                                        exit(EXIT_FAILURE);
+                                }
+                                strcat(request, "\n");
+                                strcat(request, buffer);
+                                if(!(buffer[0] == '\r' &&
+                                     buffer[1] == '\n'))
+                                {
+                                        continue;
+                                }
+                                // if(!(buffer[recvLen-4] == '\r' &&
+                                //      buffer[recvLen-3] == '\n' &&
+                                //      buffer[recvLen-2] == '\r' &&
+                                //      buffer[recvLen-1] == '\n'))
+                                // {
+                                //         continue;
+                                // }
+                                line = strtok(request, "\r\n");
+                                it = 0;
+                                bzero(&response, BUFFERSIZE);
+                                totalSize = 0;
+                                while(line != NULL)
+                                {
+                                        if(!(strstr(line, "HEAD") == NULL))
                                         {
-                                                case 0:
+                                                if(!(strstr(line, "/") == NULL))
                                                 {
-                                                        if(sizeof(word) > VERBSIZE)
-                                                        {
-                                                                perror("Verb Overflow");
-                                                                exit(EXIT_FAILURE);
-                                                        }
-                                                        else if(strcasecmp(word, "HEAD") == 0)
-                                                        {
-                                                                snprintf(verb,sizeof("HEAD") ,"HEAD");
-                                                                /* CHANGE TO ASPRINTF */
-                                                        }
-                                                        else if(strcasecmp(word, "GET") == 0)
-                                                        {
-                                                                snprintf(verb,sizeof("GET") ,"GET");
-                                                        }
-                                                        else if(strcasecmp(word, "Connection:") == 0)
-                                                        {
-                                                                snprintf(verb, VERBSIZE, "Connection:");
-                                                        }
-                                                        else if(strcasecmp(word, "Host:") == 0)
-                                                        {
-                                                                snprintf(verb, VERBSIZE, "Host:");
-                                                        }
-                                                        else
-                                                        {
-                                                                write(connfd, "501 Not Implemented\n",
-                                                                sizeof("501 Not Implemented\n"));
-                                                                close(connfd);
-                                                                exit(EXIT_SUCCESS);
-                                                        }
-                                                        break;
+                                                        snprintf(response, BUFFERSIZE, 
+                                                        "HTTP/1.1 200 OK\r\n"
+                                                        "Content-Type: text/plain\r\n"
+                                                        "\r\n"); 
+                                                        write(connfd, response, sizeof(response));
                                                 }
-                                                case 1:
+                                                else
                                                 {
-
-                                                        if(((strcasecmp(word, "close") == 0) && 
-                                                        (strcasecmp(verb, "Connection:") == 0) ))
-                                                        {
-                                                                exit(EXIT_SUCCESS);
-                                                        }
-                                                        else if((strcasecmp(verb, "Host:") == 0))
-                                                        {
-                                                                printf("Do something with host pls");
-                                                                exit(EXIT_SUCCESS);
-                                                        }
-                                                        else if((strcasecmp(verb, "GET") == 0))
-                                                        {
-                                                                if(!(strcmp(word, "/") == 0))
-                                                                {
-                                                                        write(connfd, "404 Not Found\n",
-                                                                        sizeof("404 Not Found"));
-                                                                        close(connfd);
-                                                                        exit(EXIT_SUCCESS);
-                                                                }
-                                                                else
-                                                                {
-                                                                        srand(time(NULL));
-
-
-
-                                                                        snprintf(response, BUFFERSIZE, 
-                                                                        "Content-Type: text/plain\nContent-Length: "); /*CONTENT BODY LENGTH*/
-                                                                        /*
-                                                                        
-                                                                        TO BE IMPLEMENTED
-
-
-                                                                        */
-                                                                        write(connfd, response, sizeof(response));
-                                                                }
-                                                        }
-                                                        else if((strcasecmp(verb, "HEAD") == 0))
-                                                        {
-                                                                if(!(strcmp(word, "/") == 0))
-                                                                {
-                                                                        write(connfd, "404 Not Found\n",
-                                                                        sizeof("404 Not Found"));
-                                                                        close(connfd);
-                                                                        exit(EXIT_SUCCESS);
-                                                                }
-                                                                else
-                                                                {
-                                                                        bzero(&response, BUFFERSIZE);
-                                                                        snprintf(response, BUFFERSIZE, 
-                                                                        "\nContent-Type: text/plain\nContent-Length: 0\n");
-                                                                        write(connfd, response, sizeof(response));
-                                                                }
-                                                        }
-                                                        break;
+                                                        snprintf(response, BUFFERSIZE, 
+                                                        "HTTP/1.0 404 Not Found\r\n\r\n");
                                                 }
-                                                case 2:
+                                        }
+                                        else if(!(strstr(line, "GET") == NULL))
+                                        {
+                                                if(!(strstr(line, "/") == NULL))
                                                 {
-                                                        break;
-                                                }
-                                                default:
-                                                {
+                                                        snprintf(response, BUFFERSIZE, 
+                                                        "HTTP/1.1 200 OK\r\n"
+                                                        "Content-Type: text/plain\r\n"
+                                                        "Content-Length: %lu\r\n"
+                                                        "\r\n", strlen(jacknjill)); 
+                                                        write(connfd, response, sizeof(response));
+                                                        write(connfd, jacknjill, sizeof(jacknjill));
 
                                                 }
+                                                else
+                                                {
+                                                
+                                                        snprintf(response, BUFFERSIZE, 
+                                                        "HTTP/1.0 404 Not Found\r\n\r\n");
+                                                }
 
-                                        } 
-                                        word = strtok(NULL, " ");
+                                        }
+                                        else if(!(strstr(line, "CONNECTION: CLOSE") == NULL))
+                                        {
+                                                closeCon = true;
+                                        }
+                                        else if (it != 0)
+                                        {
+                                                snprintf(response, BUFFERSIZE, 
+                                                "HTTP/1.0 501 Not Implemented\r\n\r\n");
+                                        }
+                                        line = strtok(NULL, "\r\n");
                                         it++;
                                 }
                         }
@@ -206,8 +195,8 @@ int main(int argc, char* argv[])
                         /*Parent process*/
                         close(connfd);
                 }
-                close(connfd);
         }
+        fclose(file);
         close(sockfd);
 }
 

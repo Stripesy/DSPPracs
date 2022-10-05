@@ -1,5 +1,6 @@
 #include<stdlib.h>
 #include<stdio.h>
+#include<time.h>
 #include<sys/types.h>
 #include<sys/socket.h>
 #include<netinet/in.h>
@@ -13,7 +14,7 @@
 #include<stdbool.h>
 
 #define BUFFERSIZE 1024
-#define VERBSIZE 10
+#define VERBSIZE 100
 
 void handle_sigchld(int signalCode);
 
@@ -25,12 +26,10 @@ int main(int argc, char* argv[])
         char buffer[BUFFERSIZE];
         char response[BUFFERSIZE];
         int recvLen;
-        int port = 2013;
+        int port = 1894;
         char* word;
         struct sigaction chldsig;
         char verb[VERBSIZE];
-        bool connection;
-        bool host;
 
         // if(argc != 2) 
         // {
@@ -84,8 +83,6 @@ int main(int argc, char* argv[])
                         while((recvLen = read(connfd, buffer, sizeof(buffer)-1)) > 0)
                         {       
                                 it = 0; // 0 = VERB, 1 = DOCUMENT, 2 = VERSION.
-                                connection = false;
-                                host = false;
                                 buffer[recvLen-2] = '\0';
                                 word = strtok(buffer, " ");
                                 /*
@@ -116,11 +113,11 @@ int main(int argc, char* argv[])
                                                         }
                                                         else if(strcasecmp(word, "Connection:") == 0)
                                                         {
-                                                                connection = true;
+                                                                snprintf(verb, VERBSIZE, "Connection:");
                                                         }
                                                         else if(strcasecmp(word, "Host:") == 0)
                                                         {
-                                                                host = true;
+                                                                snprintf(verb, VERBSIZE, "Host:");
                                                         }
                                                         else
                                                         {
@@ -133,14 +130,59 @@ int main(int argc, char* argv[])
                                                 }
                                                 case 1:
                                                 {
-                                                        if(((strcasecmp(word, "close") == 0) && connection))
+
+                                                        if(((strcasecmp(word, "close") == 0) && 
+                                                        (strcasecmp(verb, "Connection:") == 0) ))
                                                         {
                                                                 exit(EXIT_SUCCESS);
                                                         }
-                                                        else if(host)
+                                                        else if((strcasecmp(verb, "Host:") == 0))
                                                         {
                                                                 printf("Do something with host pls");
                                                                 exit(EXIT_SUCCESS);
+                                                        }
+                                                        else if((strcasecmp(verb, "GET") == 0))
+                                                        {
+                                                                if(!(strcmp(word, "/") == 0))
+                                                                {
+                                                                        write(connfd, "404 Not Found\n",
+                                                                        sizeof("404 Not Found"));
+                                                                        close(connfd);
+                                                                        exit(EXIT_SUCCESS);
+                                                                }
+                                                                else
+                                                                {
+                                                                        srand(time(NULL));
+
+
+
+                                                                        snprintf(response, BUFFERSIZE, 
+                                                                        "Content-Type: text/plain\nContent-Length: "); /*CONTENT BODY LENGTH*/
+                                                                        /*
+                                                                        
+                                                                        TO BE IMPLEMENTED
+
+
+                                                                        */
+                                                                        write(connfd, response, sizeof(response));
+                                                                }
+                                                        }
+                                                        else if((strcasecmp(verb, "HEAD") == 0))
+                                                        {
+                                                                if(!(strcmp(word, "/") == 0))
+                                                                {
+                                                                        write(connfd, "404 Not Found\n",
+                                                                        sizeof("404 Not Found"));
+                                                                        close(connfd);
+                                                                        exit(EXIT_SUCCESS);
+                                                                }
+                                                                else
+                                                                {
+                                                                        bzero(&response, BUFFERSIZE);
+                                                                        snprintf(response, BUFFERSIZE, 
+                                                                        "\nContent-Type: text/plain\nContent-Length: 0\n");
+                                                                        write(connfd, response, sizeof(response));
+                                                                }
                                                         }
                                                         break;
                                                 }

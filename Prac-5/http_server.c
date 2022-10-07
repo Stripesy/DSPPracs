@@ -39,12 +39,12 @@ int main(int argc, char* argv[])
                 exit(EXIT_FAILURE);
         }
 
-        // if(argc != 2) 
-        // {
-        //         fprintf(stderr, "Usage: %s port \n", argv[0]);
-        //         exit(EXIT_FAILURE);
-        // }
-        port = 1891;
+        if(argc != 2) 
+        {
+                fprintf(stderr, "Usage: %s port \n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
+        port = argv[1];
         chldsig.sa_handler = handle_sigchld;
         sigfillset(&chldsig.sa_mask);
         chldsig.sa_flags = SA_RESTART | SA_NOCLDSTOP;

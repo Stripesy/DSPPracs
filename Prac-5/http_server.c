@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
         char buffer[BUFFERSIZE], request[BUFFERSIZE], response[BUFFERSIZE];
         char jacknjill[3000];
         int recvLen;
-        int port = 1893;
+        int port;
         char* line;
         char* word;
         struct sigaction chldsig;
@@ -39,11 +39,12 @@ int main(int argc, char* argv[])
                 exit(EXIT_FAILURE);
         }
 
-        // if(argc != 2) 
-        // {
-        //         fprintf(stderr, "Usage: %s port \n", argv[0]);
-        //         exit(EXIT_FAILURE);
-        // }
+        if(argc != 2) 
+        {
+                fprintf(stderr, "Usage: %s port \n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
+        port = atoi(argv[1]);
         chldsig.sa_handler = handle_sigchld;
         sigfillset(&chldsig.sa_mask);
         chldsig.sa_flags = SA_RESTART | SA_NOCLDSTOP;

@@ -39,12 +39,12 @@ int main(int argc, char* argv[])
                 exit(EXIT_FAILURE);
         }
 
-        if(argc != 2) 
-        {
-                fprintf(stderr, "Usage: %s port \n", argv[0]);
-                exit(EXIT_FAILURE);
-        }
-        port = atoi(argv[1]);
+        // if(argc != 2) 
+        // {
+        //         fprintf(stderr, "Usage: %s port \n", argv[0]);
+        //         exit(EXIT_FAILURE);
+        // }
+        port = 1891;
         chldsig.sa_handler = handle_sigchld;
         sigfillset(&chldsig.sa_mask);
         chldsig.sa_flags = SA_RESTART | SA_NOCLDSTOP;
@@ -137,11 +137,22 @@ int main(int argc, char* argv[])
                                         {
                                                 if(!(strstr(line, " / ") == NULL))
                                                 {
+                                                        if(!(strstr(line, "HTTP/1.1") == NULL))
+                                                        {
                                                         snprintf(response, BUFFERSIZE, 
                                                         "HTTP/1.1 200 OK\r\n"
                                                         "Content-Type: text/plain\r\n"
                                                         "\r\n"); 
                                                         write(connfd, response, sizeof(response));
+                                                        }
+                                                        else
+                                                        {
+                                                        bzero(&response, sizeof(response));
+                                                        snprintf(response, BUFFERSIZE,
+                                                        "HTTP/1.1 501 Not Implemented\r\n\r\n" 
+                                                        );
+                                                        write(connfd, response, sizeof(response));  
+                                                        }
                                                 }
                                                 else
                                                 {
@@ -155,6 +166,8 @@ int main(int argc, char* argv[])
                                         {
                                                 if(!(strstr(line, " / ") == NULL))
                                                 {
+                                                        if(!(strstr(line, "HTTP/1.1") == NULL))
+                                                        {
                                                         snprintf(response, BUFFERSIZE, 
                                                         "HTTP/1.1 200 OK\r\n"
                                                         "Content-Type: text/plain\r\n"
@@ -162,6 +175,15 @@ int main(int argc, char* argv[])
                                                         "\r\n", strlen(jacknjill)); 
                                                         write(connfd, response, sizeof(response));
                                                         write(connfd, jacknjill, sizeof(jacknjill));
+                                                        }
+                                                        else
+                                                        {
+                                                        bzero(&response, sizeof(response));
+                                                        snprintf(response, BUFFERSIZE,
+                                                        "HTTP/1.1 501 Not Implemented\r\n\r\n" 
+                                                        );
+                                                        write(connfd, response, sizeof(response));  
+                                                        }
                                                 }
                                                 else
                                                 {

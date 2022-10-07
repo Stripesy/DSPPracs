@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
         char buffer[BUFFERSIZE], request[BUFFERSIZE], response[BUFFERSIZE];
         char jacknjill[3000];
         int recvLen;
-        int port = 6007;
+        int port = 1893;
         char* line;
         char* word;
         struct sigaction chldsig;
@@ -38,7 +38,6 @@ int main(int argc, char* argv[])
                 fprintf(stderr, "While opening jack_jill.txt");
                 exit(EXIT_FAILURE);
         }
-
 
         // if(argc != 2) 
         // {
@@ -126,22 +125,16 @@ int main(int argc, char* argv[])
                                 {
                                         continue;
                                 }
-                                // if(!(buffer[recvLen-4] == '\r' &&
-                                //      buffer[recvLen-3] == '\n' &&
-                                //      buffer[recvLen-2] == '\r' &&
-                                //      buffer[recvLen-1] == '\n'))
-                                // {
-                                //         continue;
-                                // }
                                 line = strtok(request, "\r\n");
                                 it = 0;
                                 bzero(&response, BUFFERSIZE);
                                 totalSize = 0;
                                 while(line != NULL)
                                 {
+                                        bzero(&response, sizeof(response));
                                         if(!(strstr(line, "HEAD") == NULL))
                                         {
-                                                if(!(strstr(line, "/") == NULL))
+                                                if(!(strstr(line, " / ") == NULL))
                                                 {
                                                         snprintf(response, BUFFERSIZE, 
                                                         "HTTP/1.1 200 OK\r\n"
@@ -152,12 +145,14 @@ int main(int argc, char* argv[])
                                                 else
                                                 {
                                                         snprintf(response, BUFFERSIZE, 
-                                                        "HTTP/1.0 404 Not Found\r\n\r\n");
+                                                        "HTTP/1.1 404 Not Found\r\n\r\n");
+                                                        write(connfd, response, sizeof(response));
+                                                        close(connfd);
                                                 }
                                         }
                                         else if(!(strstr(line, "GET") == NULL))
                                         {
-                                                if(!(strstr(line, "/") == NULL))
+                                                if(!(strstr(line, " / ") == NULL))
                                                 {
                                                         snprintf(response, BUFFERSIZE, 
                                                         "HTTP/1.1 200 OK\r\n"
@@ -166,13 +161,14 @@ int main(int argc, char* argv[])
                                                         "\r\n", strlen(jacknjill)); 
                                                         write(connfd, response, sizeof(response));
                                                         write(connfd, jacknjill, sizeof(jacknjill));
-
                                                 }
                                                 else
                                                 {
                                                 
                                                         snprintf(response, BUFFERSIZE, 
-                                                        "HTTP/1.0 404 Not Found\r\n\r\n");
+                                                        "HTTP/1.1 404 Not Found\r\n\r\n");
+                                                        write(connfd, response, sizeof(response));
+                                                        close(connfd);
                                                 }
 
                                         }
@@ -183,7 +179,7 @@ int main(int argc, char* argv[])
                                         else if (it != 0)
                                         {
                                                 snprintf(response, BUFFERSIZE, 
-                                                "HTTP/1.0 501 Not Implemented\r\n\r\n");
+                                                "HTTP/1.1 501 Not Implemented\r\n\r\n");
                                         }
                                         line = strtok(NULL, "\r\n");
                                         it++;

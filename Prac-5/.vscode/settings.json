@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "stdlib.h": "c",
-        "string.h": "c",
-        "in.h": "c"
-    },
-    "editor.minimap.maxColumn": 80
-}

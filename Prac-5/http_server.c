@@ -33,6 +33,13 @@ int main(int argc, char* argv[])
         bool closeCon;
         FILE *file;
 
+        char* txt = "JACK and JILL," \
+        "Went up the hill," \
+        "To fetch a pail of water," \
+        "Jack fell down," \
+        "And broke his crown," \
+        "And Jill came tumbling after.";
+
         if((file = fopen("jack_jill.txt", "r+")) == NULL)
         {
                 fprintf(stderr, "While opening jack_jill.txt");

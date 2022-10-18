@@ -1,0 +1,13 @@
+{
+    "[c]": {
+        "editor.tabSize": 8,
+        "editor.rulers": [
+            {
+                "column": 80
+            }
+        ]
+    },
+    "files.associations": {
+        "inet.h": "c"
+    }
+}

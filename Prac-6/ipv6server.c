@@ -34,14 +34,12 @@ int main(int argc, char* argv[])
 	server_addr.sin6_addr = in6addr_any;
 	server_addr.sin6_port = htons(port);
  
-	/* Bind address and socket together */
 	if(bind(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
 		perror("bind()");
 		close(sockfd);
 		return EXIT_FAILURE;
 	}
  
-	/* Create listening queue (client requests) */
 	if (listen(sockfd, 5) < 0) {
 		perror("listen()");
 		close(sockfd);
@@ -51,7 +49,6 @@ int main(int argc, char* argv[])
 	client_addr_len = sizeof(client_addr);
  
 	while(1) {
-		/* Do TCP handshake with client */
                 bzero(&buffer, BUFFERSIZE);
 		csd = accept(sockfd,
 				(struct sockaddr*)&client_addr,
@@ -61,15 +58,12 @@ int main(int argc, char* argv[])
 			close(sockfd);
 			return EXIT_FAILURE;
 		}
-
-		/* Wait for data from client */
 		if (read(csd, &buffer, BUFFERSIZE) < 0) {
 			perror("read()");
 			close(csd);
 			continue;
 		}
  
-		/* Send response to client */
 		strcpy(buffer, "Sample response.\n");
 		if (write(csd, buffer, BUFFERSIZE) < 0) {
 			perror("write()");
@@ -77,7 +71,6 @@ int main(int argc, char* argv[])
 			continue;
 		}
  
-		/* Do TCP teardown */
 		if (close(csd) < 0) {
 			perror("close()");
 			csd = -1;

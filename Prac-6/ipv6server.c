@@ -19,14 +19,13 @@ int main(int argc, char* argv[])
 	socklen_t client_addr_len;
 	char buffer[BUFFERSIZE];
 
-        // if(argc != 2)
-        // {
-        //         fprintf(stderr, "Usage: %s port \n", argv[0]);
-        //         exit(EXIT_FAILURE);
-        // }
+        if(argc != 2)
+        {
+                fprintf(stderr, "Usage: %s port \n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
 
-	// port = atoi(argv[1]);
-	port = 2003;
+	port = atoi(argv[1]);
 
 	if((sockfd = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP)) < 0) {
 		perror("socket()");
